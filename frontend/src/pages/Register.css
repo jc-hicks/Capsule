@@ -1,0 +1,2 @@
+/* Register reuses the shared auth-card layout defined in Login.css. */
+@import "./Login.css";

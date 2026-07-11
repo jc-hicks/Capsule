@@ -1,0 +1,42 @@
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.auth-card .card-body {
+  padding: 2rem;
+}
+
+.auth-title {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.auth-actions .btn {
+  flex: 1;
+}
+
+.auth-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+  color: #666;
+}

@@ -8,6 +8,8 @@ import Button from "react-bootstrap/Button";
 import CapsulesList from "../components/CapsulesList.jsx";
 import CapsuleForm from "../components/CapsuleForm.jsx";
 
+import "./IndexPage.css";
+
 export default function IndexPage() {
   const navigate = useNavigate();
   const [data, setCapsules] = useState(null);
@@ -75,13 +77,13 @@ export default function IndexPage() {
   };
 
   return (
-    <Row>
+    <Row className="index-page">
       <Col>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="index-header">
           <h1>Capsules</h1>
           {user && (
-            <div>
-              <span className="me-3">Welcome, {user.name}</span>
+            <div className="index-user">
+              <span className="index-user-name">Welcome, {user.name}</span>
               <Button
                 variant="outline-secondary"
                 size="sm"

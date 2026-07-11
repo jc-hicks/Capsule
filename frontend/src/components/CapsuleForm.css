@@ -1,0 +1,22 @@
+.capsule-form {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.capsule-form h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.capsule-form .form-floating {
+  margin-bottom: 1rem;
+}
+
+.capsule-form .btn {
+  width: 100%;
+}

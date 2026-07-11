@@ -1,0 +1,15 @@
+.capsules-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.capsules-list-empty {
+  margin: 1.5rem 0;
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+  background: #f8f9fa;
+  border-radius: 0.75rem;
+}
