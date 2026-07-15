@@ -50,6 +50,19 @@
   color: #8a94a6;
 }
 
+.capsule-share-code {
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  color: #556;
+}
+
+.capsule-share-code span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #3949ab;
+}
+
 .capsule-countdown {
   margin-top: 0.5rem;
   margin-bottom: 0;

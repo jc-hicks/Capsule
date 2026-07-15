@@ -29,3 +29,15 @@
   color: #556;
   font-weight: 500;
 }
+
+.index-forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.index-forms .capsule-form {
+  flex: 1 1 20rem;
+  margin-top: 0;
+}

@@ -36,7 +36,11 @@ export default function Capsule({ capsule }) {
         {isLocked && capsule.openDate && (
           <Countdown openDate={capsule.openDate} />
         )}
-        <Card.Text className="capsule-id">ID: {capsule.id}</Card.Text>
+        {capsule.shareCode && (
+          <Card.Text className="capsule-share-code">
+            Share code: <span>{capsule.shareCode}</span>
+          </Card.Text>
+        )}
         {members.length > 0 && (
           <div className="capsule-members">
             {members.map((member) => (
@@ -71,6 +75,7 @@ Capsule.propTypes = {
     description: PropTypes.string,
     members: PropTypes.arrayOf(PropTypes.string),
     openDate: PropTypes.string,
-    locked: PropTypes.bool
+    locked: PropTypes.bool,
+    shareCode: PropTypes.string
   }).isRequired
 };

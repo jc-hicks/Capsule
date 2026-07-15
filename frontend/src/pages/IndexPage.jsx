@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 
 import CapsulesList from "../components/CapsulesList.jsx";
 import CapsuleForm from "../components/CapsuleForm.jsx";
+import JoinCapsuleForm from "../components/JoinCapsuleForm.jsx";
 
 import "./IndexPage.css";
 
@@ -82,6 +83,27 @@ export default function IndexPage() {
     }
   };
 
+  const handleJoin = async (code) => {
+    const response = await fetch("/api/capsules/join", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({ code })
+    });
+
+    const body = await response.json();
+
+    if (!response.ok) {
+      throw new Error(body.error || "Failed to join capsule");
+    }
+
+    // Refresh so the newly joined capsule appears in the list.
+    fetchCapsules();
+    return body;
+  };
+
   return (
     <Row className="index-page">
       <Col>
@@ -101,7 +123,10 @@ export default function IndexPage() {
           )}
         </div>
         <CapsulesList capsules={data} />
-        <CapsuleForm onSubmit={handleSubmit} />
+        <div className="index-forms">
+          <JoinCapsuleForm onJoin={handleJoin} />
+          <CapsuleForm onSubmit={handleSubmit} />
+        </div>
       </Col>
     </Row>
   );

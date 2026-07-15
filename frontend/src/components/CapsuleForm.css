@@ -1,3 +1,15 @@
+.join-capsule-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: #c0392b;
+}
+
+.join-capsule-status {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: #2e7d32;
+}
+
 .capsule-form {
   background: #ffffff;
   border-radius: 0.75rem;

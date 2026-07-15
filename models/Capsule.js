@@ -1,17 +1,22 @@
 import { ObjectId } from "mongodb";
 import { capsulesCollection } from "../config/db.js";
+import { generateShareCode, normalizeShareCode } from "./shareCode.js";
 
-const toPlain = (doc) => {
+const toPlain = (doc, viewerId) => {
   if (!doc) return null;
+  const owner = doc.owner.toString();
   const locked = doc.openDate ? new Date(doc.openDate) > new Date() : false;
   const plain = {
     ...doc,
     id: doc._id.toString(),
-    owner: doc.owner.toString(),
+    owner,
     locked
   };
   if (locked) {
     delete plain.description;
+  }
+  if (!viewerId || viewerId !== owner) {
+    delete plain.shareCode;
   }
   return plain;
 };
@@ -23,23 +28,44 @@ export const createCapsule = async (capsule, ownerId) => {
     openDate: capsule.openDate,
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
+    shareCode: generateShareCode(ownerId),
     createdAt: new Date()
   };
   const result = await capsulesCollection().insertOne(doc);
-  return toPlain({ ...doc, _id: result.insertedId });
+  return toPlain({ ...doc, _id: result.insertedId }, ownerId);
 };
 
-export const findCapsules = async (ownerId, query) => {
-  const filter = { owner: new ObjectId(ownerId) };
+// Returns capsules the viewer owns as well as ones they've joined as a member.
+export const findCapsules = async (viewerId, query) => {
+  const filter = {
+    $or: [{ owner: new ObjectId(viewerId) }, { members: viewerId }]
+  };
   if (query) {
     filter.name = { $regex: query, $options: "i" };
   }
   const capsules = await capsulesCollection().find(filter).toArray();
-  return capsules.map(toPlain);
+  return capsules.map((doc) => toPlain(doc, viewerId));
 };
 
-export const findCapsuleById = async (id) => {
+export const findCapsuleById = async (id, viewerId) => {
   if (!ObjectId.isValid(id)) return null;
   const capsule = await capsulesCollection().findOne({ _id: new ObjectId(id) });
-  return toPlain(capsule);
+  return toPlain(capsule, viewerId);
+};
+
+export const findCapsuleByShareCode = async (code, viewerId) => {
+  const shareCode = normalizeShareCode(code);
+  if (!shareCode) return null;
+  const capsule = await capsulesCollection().findOne({ shareCode });
+  return toPlain(capsule, viewerId);
+};
+
+
+export const addMemberToCapsule = async (id, userId) => {
+  if (!ObjectId.isValid(id)) return null;
+  await capsulesCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $addToSet: { members: userId } }
+  );
+  return findCapsuleById(id, userId);
 };

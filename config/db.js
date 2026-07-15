@@ -22,6 +22,9 @@ export const connectDB = async () => {
   await db.collection("users").createIndex({ email: 1 }, { unique: true });
   await db.collection("capsules").createIndex({ owner: 1, openDate: 1 });
   await db
+    .collection("capsules")
+    .createIndex({ shareCode: 1 }, { unique: true, sparse: true });
+  await db
     .collection("contributions")
     .createIndex({ capsuleId: 1, createdAt: 1 });
 

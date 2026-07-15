@@ -2,8 +2,10 @@ import express from "express";
 
 import { isAuthenticated } from "../middleware/auth.js";
 import {
+  addMemberToCapsule,
   createCapsule,
   findCapsuleById,
+  findCapsuleByShareCode,
   findCapsules
 } from "../models/Capsule.js";
 import {
@@ -43,9 +45,34 @@ router.get("/capsules", isAuthenticated, async (req, res, next) => {
   }
 });
 
+router.post("/capsules/join", isAuthenticated, async (req, res, next) => {
+  try {
+    const capsule = await findCapsuleByShareCode(req.body.code, req.user.id);
+
+    if (!capsule) {
+      return res.status(404).json({ error: "No capsule found for that code" });
+    }
+
+    if (capsule.owner === req.user.id) {
+      return res.status(400).json({ error: "You already own this capsule" });
+    }
+
+    if ((capsule.members || []).includes(req.user.id)) {
+      return res
+        .status(400)
+        .json({ error: "You have already joined this capsule" });
+    }
+
+    const updated = await addMemberToCapsule(capsule.id, req.user.id);
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/capsules/:id", isAuthenticated, async (req, res, next) => {
   try {
-    const capsule = await findCapsuleById(req.params.id);
+    const capsule = await findCapsuleById(req.params.id, req.user.id);
 
     if (!capsule) {
       return res.status(404).json({ error: "Capsule not found" });
