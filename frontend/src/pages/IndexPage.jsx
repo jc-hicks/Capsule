@@ -12,7 +12,7 @@ import "./IndexPage.css";
 
 export default function IndexPage() {
   const navigate = useNavigate();
-  const [data, setCapsules] = useState(null);
+  const [data, setCapsules] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -32,14 +32,19 @@ export default function IndexPage() {
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
       method: "POST",
-      credentials: "include",
+      credentials: "include"
     });
     navigate("/login");
   };
 
   const fetchCapsules = useCallback(() => {
-    fetch("/api/capsules")
-      .then((response) => response.json())
+    fetch("/api/capsules", { credentials: "include" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to load capsules");
+        }
+        return response.json();
+      })
       .then((data) => setCapsules(data));
   }, []);
 
@@ -60,9 +65,10 @@ export default function IndexPage() {
       const response = await fetch("/api/capsules", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(capsule),
+        credentials: "include",
+        body: JSON.stringify(capsule)
       });
 
       if (!response.ok) {

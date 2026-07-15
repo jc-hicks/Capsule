@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
+import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
 import Countdown from "./Countdown.jsx";
@@ -14,7 +16,7 @@ export default function Capsule({ capsule }) {
     openLabel = new Date(capsule.openDate).toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   }
 
@@ -34,6 +36,7 @@ export default function Capsule({ capsule }) {
         {isLocked && capsule.openDate && (
           <Countdown openDate={capsule.openDate} />
         )}
+        <Card.Text className="capsule-id">ID: {capsule.id}</Card.Text>
         {members.length > 0 && (
           <div className="capsule-members">
             {members.map((member) => (
@@ -48,6 +51,14 @@ export default function Capsule({ capsule }) {
             {isLocked ? "Opens" : "Opened"} {openLabel}
           </p>
         )}
+        <Button
+          as={Link}
+          to={`/capsules/${capsule.id}`}
+          variant="outline-primary"
+          size="sm"
+        >
+          View capsule
+        </Button>
       </Card.Body>
     </Card>
   );
@@ -55,10 +66,11 @@ export default function Capsule({ capsule }) {
 
 Capsule.propTypes = {
   capsule: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     name: PropTypes.string,
     description: PropTypes.string,
     members: PropTypes.arrayOf(PropTypes.string),
     openDate: PropTypes.string,
-    locked: PropTypes.bool,
-  }).isRequired,
+    locked: PropTypes.bool
+  }).isRequired
 };

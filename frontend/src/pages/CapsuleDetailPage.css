@@ -1,0 +1,157 @@
+.capsule-detail-page {
+  padding: 2rem 0 3rem;
+}
+
+.capsule-detail-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.capsule-detail-breadcrumb {
+  margin-bottom: -0.5rem;
+}
+
+.capsule-detail-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: #556;
+}
+
+.capsule-hero-card,
+.capsule-contribution-card,
+.capsule-reveal-card,
+.contribution-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(20, 28, 40, 0.08);
+}
+
+.capsule-hero-card {
+  background: linear-gradient(135deg, #fffaf3 0%, #f3f7ff 100%);
+}
+
+.capsule-hero-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.capsule-hero-top h1 {
+  margin: 0.65rem 0 0.35rem;
+  font-weight: 700;
+  color: #162033;
+}
+
+.capsule-hero-description {
+  margin-bottom: 0;
+  color: #556;
+  max-width: 44rem;
+}
+
+.capsule-hero-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.72);
+  min-width: 170px;
+}
+
+.capsule-hero-date span,
+.capsule-hero-date small {
+  color: #667085;
+}
+
+.capsule-hero-note {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(11, 95, 255, 0.08);
+  color: #243b63;
+}
+
+.capsule-detail-grid {
+  align-items: start;
+}
+
+.capsule-contribution-card h2,
+.capsule-reveal-card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  color: #162033;
+}
+
+.capsule-reveal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.capsule-locked-state {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: #556;
+}
+
+.capsule-locked-countdown {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #162033;
+}
+
+.contribution-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.contribution-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.contribution-type-badge {
+  text-transform: capitalize;
+}
+
+.contribution-meta {
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.contribution-text {
+  white-space: pre-wrap;
+  margin-bottom: 0;
+  color: #243044;
+}
+
+.contribution-photo img {
+  display: block;
+  max-width: 100%;
+  border-radius: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.capsule-contribution-card .form-text {
+  display: block;
+  margin-top: -0.35rem;
+  margin-bottom: 0.85rem;
+}

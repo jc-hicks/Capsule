@@ -8,7 +8,7 @@ const toPlain = (doc) => {
     ...doc,
     id: doc._id.toString(),
     owner: doc.owner.toString(),
-    locked,
+    locked
   };
   if (locked) {
     delete plain.description;
@@ -23,7 +23,7 @@ export const createCapsule = async (capsule, ownerId) => {
     openDate: capsule.openDate,
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
-    createdAt: new Date(),
+    createdAt: new Date()
   };
   const result = await capsulesCollection().insertOne(doc);
   return toPlain({ ...doc, _id: result.insertedId });
@@ -36,4 +36,10 @@ export const findCapsules = async (ownerId, query) => {
   }
   const capsules = await capsulesCollection().find(filter).toArray();
   return capsules.map(toPlain);
+};
+
+export const findCapsuleById = async (id) => {
+  if (!ObjectId.isValid(id)) return null;
+  const capsule = await capsulesCollection().findOne({ _id: new ObjectId(id) });
+  return toPlain(capsule);
 };

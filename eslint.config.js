@@ -7,7 +7,7 @@ import prettier from "eslint-plugin-prettier";
 
 export default [
   {
-    ignores: ["**/dist/**", "**/node_modules/**"],
+    ignores: ["**/dist/**", "**/node_modules/**"]
   },
   {
     files: ["**/*.{js,jsx,mjs,cjs}"],
@@ -17,27 +17,27 @@ export default [
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: {
-          jsx: true,
-        },
+          jsx: true
+        }
       },
 
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2025,
-      },
+        ...globals.es2025
+      }
     },
 
     settings: {
       react: {
-        version: "18",
-      },
+        version: "18"
+      }
     },
 
     plugins: {
       react,
       "react-hooks": reactHooks,
-      prettier,
+      prettier
     },
 
     rules: {
@@ -60,11 +60,11 @@ export default [
         "error",
         {
           endOfLine: "lf",
-          trailingComma: "es5",
-          singleQuote: false,
-        },
-      ],
-    },
+          trailingComma: "none",
+          singleQuote: false
+        }
+      ]
+    }
   },
-  eslintConfigPrettier,
+  eslintConfigPrettier
 ];
