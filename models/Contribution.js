@@ -59,4 +59,16 @@ export const findContributionsByCapsuleId = async (capsuleId) => {
   return contributions.map(toPlain);
 };
 
+export const deleteContributionsByCapsuleId = async (capsuleId) => {
+  if (!ObjectId.isValid(capsuleId)) {
+    return 0;
+  }
+
+  const result = await contributionsCollection().deleteMany({
+    capsuleId: new ObjectId(capsuleId)
+  });
+
+  return result.deletedCount;
+};
+
 export const isContributionType = (type) => allowedTypes.has(type);

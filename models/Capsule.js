@@ -60,7 +60,6 @@ export const findCapsuleByShareCode = async (code, viewerId) => {
   return toPlain(capsule, viewerId);
 };
 
-
 export const addMemberToCapsule = async (id, userId) => {
   if (!ObjectId.isValid(id)) return null;
   await capsulesCollection().updateOne(
@@ -68,4 +67,41 @@ export const addMemberToCapsule = async (id, userId) => {
     { $addToSet: { members: userId } }
   );
   return findCapsuleById(id, userId);
+};
+
+// Applies the provided fields to a capsule owned by ownerId. Only the owner
+// may update, and only a whitelisted set of fields can be changed.
+export const updateCapsule = async (id, ownerId, updates) => {
+  if (!ObjectId.isValid(id)) return null;
+
+  const allowed = ["name", "description", "openDate"];
+  const changes = {};
+  for (const field of allowed) {
+    if (updates[field] !== undefined) {
+      changes[field] = updates[field];
+    }
+  }
+
+  if (Object.keys(changes).length === 0) {
+    return findCapsuleById(id, ownerId);
+  }
+
+  const result = await capsulesCollection().updateOne(
+    { _id: new ObjectId(id), owner: new ObjectId(ownerId) },
+    { $set: changes }
+  );
+
+  if (result.matchedCount === 0) return null;
+  return findCapsuleById(id, ownerId);
+};
+
+// Deletes a capsule only if it is owned by ownerId. Returns true when a
+// document was removed, false otherwise.
+export const deleteCapsule = async (id, ownerId) => {
+  if (!ObjectId.isValid(id)) return false;
+  const result = await capsulesCollection().deleteOne({
+    _id: new ObjectId(id),
+    owner: new ObjectId(ownerId)
+  });
+  return result.deletedCount > 0;
 };

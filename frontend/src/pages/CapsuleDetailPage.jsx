@@ -96,10 +96,17 @@ export default function CapsuleDetailPage() {
   const [capsule, setCapsule] = useState(null);
   const [revealState, setRevealState] = useState(null);
   const [contributions, setContributions] = useState([]);
+  const [isOwner, setIsOwner] = useState(false);
   const [now, setNow] = useState(0);
   const [type, setType] = useState("message");
   const [content, setContent] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editOpenDate, setEditOpenDate] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const initialNow = window.setTimeout(() => setNow(Date.now()), 0);
@@ -126,6 +133,7 @@ export default function CapsuleDetailPage() {
         setCapsule(data.capsule);
         setRevealState(data.revealState);
         setContributions(data.contributions || []);
+        setIsOwner(Boolean(data.isOwner));
       } catch (fetchError) {
         if (isMounted) {
           setError(fetchError.message);
@@ -159,6 +167,7 @@ export default function CapsuleDetailPage() {
               setCapsule(data.capsule);
               setRevealState(data.revealState);
               setContributions(data.contributions || []);
+              setIsOwner(Boolean(data.isOwner));
             } catch (refreshError) {
               setError(refreshError.message);
             }
@@ -180,6 +189,7 @@ export default function CapsuleDetailPage() {
             setCapsule(data.capsule);
             setRevealState(data.revealState);
             setContributions(data.contributions || []);
+            setIsOwner(Boolean(data.isOwner));
           } catch (refreshError) {
             setError(refreshError.message);
           }
@@ -239,6 +249,78 @@ export default function CapsuleDetailPage() {
     }
   };
 
+  const startEditing = () => {
+    setEditName(capsule.name || "");
+    setEditDescription(capsule.description || "");
+    // openDate may be an ISO string; trim to the yyyy-mm-dd the date input needs.
+    setEditOpenDate(
+      capsule.openDate
+        ? new Date(capsule.openDate).toISOString().slice(0, 10)
+        : ""
+    );
+    setError(null);
+    setIsEditing(true);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setSavingEdit(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/capsules/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name: editName,
+          description: editDescription,
+          openDate: editOpenDate
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to update capsule");
+      }
+
+      setCapsule(data);
+      setIsEditing(false);
+    } catch (updateError) {
+      setError(updateError.message);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Delete this capsule and all its contributions?")) {
+      return;
+    }
+
+    setDeleting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/capsules/${id}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Unable to delete capsule");
+      }
+
+      navigate("/");
+    } catch (deleteError) {
+      setError(deleteError.message);
+      setDeleting(false);
+    }
+  };
+
   const locked = !revealState?.isOpen;
 
   return (
@@ -262,37 +344,118 @@ export default function CapsuleDetailPage() {
             <>
               <Card className="capsule-hero-card">
                 <Card.Body>
-                  <div className="capsule-hero-top">
-                    <div>
-                      <Badge bg={locked ? "warning" : "success"} text="dark">
-                        {locked ? "Locked" : "Open"}
-                      </Badge>
-                      <h1>{capsule.name}</h1>
-                      <p className="capsule-hero-description">
-                        {capsule.description}
-                      </p>
-                    </div>
-                    <div className="capsule-hero-date">
-                      <span>Opens on</span>
-                      <strong>
-                        {new Date(capsule.openDate).toLocaleDateString(
-                          undefined,
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric"
+                  {isEditing ? (
+                    <Form onSubmit={handleUpdate} className="capsule-edit-form">
+                      <Form.Group className="mb-3">
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control
+                          value={editName}
+                          onChange={(event) => setEditName(event.target.value)}
+                          disabled={savingEdit}
+                        />
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          value={editDescription}
+                          onChange={(event) =>
+                            setEditDescription(event.target.value)
                           }
+                          disabled={savingEdit}
+                        />
+                        {locked && (
+                          <Form.Text className="text-muted">
+                            The description is hidden while the capsule is
+                            sealed; leaving this blank keeps the current value
+                            only if you re-enter it.
+                          </Form.Text>
                         )}
-                      </strong>
-                      {locked && <small>{countdownLabel} remaining</small>}
-                    </div>
-                  </div>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Open date</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={editOpenDate}
+                          onChange={(event) =>
+                            setEditOpenDate(event.target.value)
+                          }
+                          disabled={savingEdit}
+                        />
+                      </Form.Group>
+                      <div className="capsule-edit-actions">
+                        <Button type="submit" disabled={savingEdit}>
+                          {savingEdit ? "Saving…" : "Save changes"}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline-secondary"
+                          onClick={() => setIsEditing(false)}
+                          disabled={savingEdit}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </Form>
+                  ) : (
+                    <>
+                      <div className="capsule-hero-top">
+                        <div>
+                          <Badge
+                            bg={locked ? "warning" : "success"}
+                            text="dark"
+                          >
+                            {locked ? "Locked" : "Open"}
+                          </Badge>
+                          <h1>{capsule.name}</h1>
+                          <p className="capsule-hero-description">
+                            {capsule.description}
+                          </p>
+                        </div>
+                        <div className="capsule-hero-date">
+                          <span>Opens on</span>
+                          <strong>
+                            {new Date(capsule.openDate).toLocaleDateString(
+                              undefined,
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric"
+                              }
+                            )}
+                          </strong>
+                          {locked && <small>{countdownLabel} remaining</small>}
+                        </div>
+                      </div>
 
-                  <div className="capsule-hero-note">
-                    {locked
-                      ? "Contributions are collected now, but the contents stay sealed until the open date."
-                      : "The capsule is open. Contributions and reveal content are visible below."}
-                  </div>
+                      <div className="capsule-hero-note">
+                        {locked
+                          ? "Contributions are collected now, but the contents stay sealed until the open date."
+                          : "The capsule is open. Contributions and reveal content are visible below."}
+                      </div>
+
+                      {isOwner && (
+                        <div className="capsule-owner-actions">
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={startEditing}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={handleDelete}
+                            disabled={deleting}
+                          >
+                            {deleting ? "Deleting…" : "Delete"}
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </Card.Body>
               </Card>
 

@@ -155,3 +155,14 @@
   margin-top: -0.35rem;
   margin-bottom: 0.85rem;
 }
+
+.capsule-owner-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+}
+
+.capsule-edit-actions {
+  display: flex;
+  gap: 0.65rem;
+}

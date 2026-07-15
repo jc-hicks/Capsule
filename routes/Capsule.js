@@ -4,12 +4,15 @@ import { isAuthenticated } from "../middleware/auth.js";
 import {
   addMemberToCapsule,
   createCapsule,
+  deleteCapsule,
   findCapsuleById,
   findCapsuleByShareCode,
-  findCapsules
+  findCapsules,
+  updateCapsule
 } from "../models/Capsule.js";
 import {
   createContribution,
+  deleteContributionsByCapsuleId,
   findContributionsByCapsuleId,
   isContributionType
 } from "../models/Contribution.js";
@@ -88,8 +91,9 @@ router.get("/capsules/:id", isAuthenticated, async (req, res, next) => {
     const contributions = revealState.isOpen
       ? await findContributionsByCapsuleId(capsule.id)
       : [];
+    const isOwner = capsule.owner === req.user.id;
 
-    res.json({ capsule, revealState, contributions });
+    res.json({ capsule, revealState, contributions, isOwner });
   } catch (error) {
     next(error);
   }
@@ -166,6 +170,76 @@ router.post("/capsules", isAuthenticated, async (req, res, next) => {
       req.user.id
     );
     res.status(201).json(newCapsule);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
+  try {
+    const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+    if (!capsule) {
+      return res.status(404).json({ error: "Capsule not found" });
+    }
+
+    if (capsule.owner !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "Only the owner can update this capsule" });
+    }
+
+    const { name, description, openDate } = req.body;
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (description !== undefined) updates.description = description;
+    if (openDate !== undefined) updates.openDate = openDate;
+
+    if (
+      (updates.name !== undefined && !updates.name) ||
+      (updates.description !== undefined && !updates.description) ||
+      (updates.openDate !== undefined && !updates.openDate)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Fields cannot be set to empty values" });
+    }
+
+    const updated = await updateCapsule(req.params.id, req.user.id, updates);
+
+    if (!updated) {
+      return res.status(404).json({ error: "Capsule not found" });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/capsules/:id", isAuthenticated, async (req, res, next) => {
+  try {
+    const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+    if (!capsule) {
+      return res.status(404).json({ error: "Capsule not found" });
+    }
+
+    if (capsule.owner !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "Only the owner can delete this capsule" });
+    }
+
+    const deleted = await deleteCapsule(req.params.id, req.user.id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Capsule not found" });
+    }
+
+    await deleteContributionsByCapsuleId(req.params.id);
+
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
