@@ -14,10 +14,14 @@ export default function CapsuleForm({ onSubmit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onSubmit({ name, description, openDate });
-    setName("");
-    setDescription("");
-    setOpenDate("");
+    const succeeded = await onSubmit({ name, description, openDate });
+    // Keep the entered values on screen if the create failed so the user can
+    // fix and resubmit instead of losing their input.
+    if (succeeded) {
+      setName("");
+      setDescription("");
+      setOpenDate("");
+    }
   };
 
   return (
@@ -29,6 +33,7 @@ export default function CapsuleForm({ onSubmit }) {
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
       </FloatingLabel>
       <FloatingLabel controlId="description" label="Description">
@@ -37,6 +42,7 @@ export default function CapsuleForm({ onSubmit }) {
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          required
         />
       </FloatingLabel>
       <Form.Group className="mb-3" controlId="openDate">
@@ -45,6 +51,7 @@ export default function CapsuleForm({ onSubmit }) {
           type="date"
           value={openDate}
           onChange={(e) => setOpenDate(e.target.value)}
+          required
         />
       </Form.Group>
       <Button type="submit">Submit</Button>

@@ -419,7 +419,8 @@ export default function CapsuleDetailPage() {
                               {
                                 year: "numeric",
                                 month: "long",
-                                day: "numeric"
+                                day: "numeric",
+                                timeZone: "UTC"
                               }
                             )}
                           </strong>

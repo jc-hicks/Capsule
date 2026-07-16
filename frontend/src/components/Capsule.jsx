@@ -16,7 +16,10 @@ export default function Capsule({ capsule }) {
     openLabel = new Date(capsule.openDate).toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
-      day: "numeric"
+      day: "numeric",
+      // openDate is a calendar date (no time); format it in UTC so it shows
+      // exactly the day that was picked instead of shifting a day in local time.
+      timeZone: "UTC"
     });
   }
 

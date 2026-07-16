@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
 
 import CapsulesList from "../components/CapsulesList.jsx";
 import CapsuleForm from "../components/CapsuleForm.jsx";
@@ -15,6 +16,7 @@ export default function IndexPage() {
   const navigate = useNavigate();
   const [data, setCapsules] = useState([]);
   const [user, setUser] = useState(null);
+  const [createError, setCreateError] = useState(null);
 
   useEffect(() => {
     fetch("/api/auth/user", { credentials: "include" })
@@ -62,6 +64,7 @@ export default function IndexPage() {
   }, [fetchCapsules]);
 
   const handleSubmit = async (capsule) => {
+    setCreateError(null);
     try {
       const response = await fetch("/api/capsules", {
         method: "POST",
@@ -72,14 +75,22 @@ export default function IndexPage() {
         body: JSON.stringify(capsule)
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to create capsule");
+      const body = await response.json().catch(() => ({}));
+
+      if (response.status === 401) {
+        navigate("/login");
+        return false;
       }
 
-      const newCapsule = await response.json();
-      setCapsules((prevCapsules) => [...prevCapsules, newCapsule]);
+      if (!response.ok) {
+        throw new Error(body.error || "Failed to create capsule");
+      }
+
+      setCapsules((prevCapsules) => [...prevCapsules, body]);
+      return true;
     } catch (error) {
-      console.error(error);
+      setCreateError(error.message);
+      return false;
     }
   };
 
@@ -123,6 +134,15 @@ export default function IndexPage() {
           )}
         </div>
         <CapsulesList capsules={data} />
+        {createError && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() => setCreateError(null)}
+          >
+            {createError}
+          </Alert>
+        )}
         <div className="index-forms">
           <JoinCapsuleForm onJoin={handleJoin} />
           <CapsuleForm onSubmit={handleSubmit} />
