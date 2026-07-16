@@ -1,12 +1,15 @@
 {
-  "name": "nodeexpressreactvite_apartmentfinder",
+  "name": "capsule",
   "version": "1.0.0",
   "main": "backend.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch backend.js",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "format": "prettier --write .",
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -32,6 +35,6 @@
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^16.4.0",
     "jest": "^30.2.0",
-    "prettier": "^3.6.2"
+    "prettier": "^3.9.5"
   }
 }

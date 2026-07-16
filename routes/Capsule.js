@@ -8,7 +8,7 @@ import {
   findCapsuleById,
   findCapsuleByShareCode,
   findCapsules,
-  updateCapsule
+  updateCapsule,
 } from "../models/Capsule.js";
 import {
   createContribution,
@@ -18,7 +18,7 @@ import {
   findContributionsByAuthor,
   findContributionsByCapsuleId,
   isContributionType,
-  updateContribution
+  updateContribution,
 } from "../models/Contribution.js";
 
 const router = express.Router();
@@ -38,7 +38,7 @@ const getCapsuleOpenState = (capsule) => {
   return {
     isOpen,
     opensAt: openDate.toISOString(),
-    millisecondsUntilOpen: Math.max(openDate.getTime() - now.getTime(), 0)
+    millisecondsUntilOpen: Math.max(openDate.getTime() - now.getTime(), 0),
   };
 };
 
@@ -109,7 +109,7 @@ router.get("/capsules/:id", isAuthenticated, async (req, res, next) => {
       revealState,
       contributions,
       myContributions,
-      isOwner
+      isOwner,
     });
   } catch (error) {
     next(error);
@@ -136,7 +136,7 @@ router.post(
       const revealState = getCapsuleOpenState(capsule);
       if (revealState.isOpen) {
         return res.status(403).json({
-          error: "This capsule is open and no longer accepting contributions"
+          error: "This capsule is open and no longer accepting contributions",
         });
       }
 
@@ -146,7 +146,7 @@ router.post(
         photoDataUrl,
         photoName,
         audioDataUrl,
-        audioName
+        audioName,
       } = req.body;
 
       if (!isContributionType(type)) {
@@ -178,7 +178,7 @@ router.post(
         audioDataUrl,
         audioName,
         authorId: req.user.id,
-        authorName: req.user.name
+        authorName: req.user.name,
       });
 
       res.status(201).json(contribution);
@@ -250,7 +250,7 @@ router.put(
         photoDataUrl,
         photoName,
         audioDataUrl,
-        audioName
+        audioName,
       });
 
       res.json(updated);

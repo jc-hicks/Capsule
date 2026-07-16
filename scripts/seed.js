@@ -7,7 +7,7 @@ import {
   closeDB,
   connectDB,
   contributionsCollection,
-  usersCollection
+  usersCollection,
 } from "../config/db.js";
 import { generateShareCode } from "../models/shareCode.js";
 
@@ -37,7 +37,7 @@ const FIRST_NAMES = [
   "Kai",
   "Ivy",
   "Ezra",
-  "Luna"
+  "Luna",
 ];
 const LAST_NAMES = [
   "Rivera",
@@ -55,7 +55,7 @@ const LAST_NAMES = [
   "Moreau",
   "Costa",
   "Ali",
-  "Weber"
+  "Weber",
 ];
 const CAPSULE_THEMES = [
   "Class of",
@@ -67,7 +67,7 @@ const CAPSULE_THEMES = [
   "New Year Goals",
   "Summer Camp",
   "First Apartment",
-  "Team Season"
+  "Team Season",
 ];
 const MESSAGE_TEMPLATES = [
   "Remember how much this meant to all of us back then.",
@@ -75,7 +75,7 @@ const MESSAGE_TEMPLATES = [
   "Never forget the little moments that made this special.",
   "Sending love to whoever opens this someday.",
   "We laughed so hard on the day we sealed this capsule.",
-  "Whatever happens next, we were here and it was good."
+  "Whatever happens next, we were here and it was good.",
 ];
 const PREDICTION_TEMPLATES = [
   "I bet we'll all live in different cities by the time this opens.",
@@ -83,7 +83,7 @@ const PREDICTION_TEMPLATES = [
   "Ten years from now we'll still be friends, I'm sure of it.",
   "I think technology will have completely changed how we talk.",
   "We'll look back and barely recognize who we were.",
-  "Someone in this group will end up famous, calling it now."
+  "Someone in this group will end up famous, calling it now.",
 ];
 // A tiny 1x1 transparent GIF so seeded photo contributions render something.
 const PLACEHOLDER_PHOTO =
@@ -105,7 +105,7 @@ const seed = async () => {
   await Promise.all([
     usersCollection().deleteMany({}),
     capsulesCollection().deleteMany({}),
-    contributionsCollection().deleteMany({})
+    contributionsCollection().deleteMany({}),
   ]);
 
   // One shared hash keeps seeding fast; every demo user has this password.
@@ -118,7 +118,7 @@ const seed = async () => {
       name,
       email: `demo${i + 1}@capsule.test`,
       passwordHash,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
   });
   await usersCollection().insertMany(users);
@@ -143,7 +143,7 @@ const seed = async () => {
       members: [...new Set(members)],
       owner: owner._id,
       shareCode: generateShareCode(owner._id.toString()),
-      createdAt: new Date()
+      createdAt: new Date(),
     };
   });
   await capsulesCollection().insertMany(capsules);
@@ -181,7 +181,7 @@ const seed = async () => {
       photoName,
       authorId: author._id,
       authorName: author.name,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
   };
 

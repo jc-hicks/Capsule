@@ -35,7 +35,7 @@ export default function IndexPage() {
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
       method: "POST",
-      credentials: "include"
+      credentials: "include",
     });
     navigate("/login");
   };
@@ -69,10 +69,10 @@ export default function IndexPage() {
       const response = await fetch("/api/capsules", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(capsule)
+        body: JSON.stringify(capsule),
       });
 
       const body = await response.json().catch(() => ({}));
@@ -98,10 +98,10 @@ export default function IndexPage() {
     const response = await fetch("/api/capsules/join", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code }),
     });
 
     const body = await response.json();

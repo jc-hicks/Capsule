@@ -44,5 +44,5 @@ export default function Countdown({ openDate, onComplete }) {
 
 Countdown.propTypes = {
   openDate: PropTypes.string.isRequired,
-  onComplete: PropTypes.func
+  onComplete: PropTypes.func,
 };

@@ -1,70 +1,80 @@
 import globals from "globals";
 import js from "@eslint/js";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
 import eslintConfigPrettier from "eslint-config-prettier";
 import prettier from "eslint-plugin-prettier";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
   {
-    ignores: ["**/dist/**", "**/node_modules/**"]
+    ignores: ["frontend/dist/**", "node_modules/**", "coverage/**"],
   },
   {
-    files: ["**/*.{js,jsx,mjs,cjs}"],
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
 
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: {
-          jsx: true
-        }
+          jsx: true,
+        },
       },
 
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2025
-      }
+        ...globals.es2025,
+      },
     },
-
-    settings: {
-      react: {
-        version: "18"
-      }
-    },
-
     plugins: {
-      react,
-      "react-hooks": reactHooks,
-      prettier
+      prettier: prettier,
     },
 
     rules: {
       // ESLint recommended rules
       ...js.configs.recommended.rules,
 
-      // React + hooks rules
-      ...react.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
-
-      // The new JSX transform doesn't require React in scope.
-      "react/react-in-jsx-scope": "off",
-
-      "no-console": 0,
+      indent: [
+        "error",
+        2,
+        {
+          SwitchCase: 1,
+        },
+      ],
 
       "no-unused-vars": ["error", { ignoreRestSiblings: true }],
+      "linebreak-style": ["error", "unix"],
+      quotes: ["error", "double"],
+      semi: ["error", "always"],
+      "no-console": 0,
 
-      // Prettier integration - this runs Prettier through ESLint.
+      // Prettier integration - this runs Prettier through ESLint
       "prettier/prettier": [
         "error",
         {
           endOfLine: "lf",
-          trailingComma: "none",
-          singleQuote: false
-        }
-      ]
-    }
+          trailingComma: "es5",
+          singleQuote: false,
+        },
+      ],
+    },
   },
-  eslintConfigPrettier
+  {
+    files: ["frontend/src/**/*.{js,jsx}"],
+    plugins: {
+      react,
+      "react-hooks": reactHooks,
+    },
+    settings: {
+      react: { version: "detect" },
+    },
+    rules: {
+      ...react.configs.flat.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
+      // The new JSX transform makes the React import unnecessary.
+      "react/react-in-jsx-scope": "off",
+    },
+  },
+  eslintConfigPrettier,
 ];

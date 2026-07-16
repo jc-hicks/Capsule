@@ -25,7 +25,7 @@ const readFileAsDataUrl = (file) =>
 
 const loadCapsuleData = async (capsuleId, navigate) => {
   const response = await fetch(`/api/capsules/${capsuleId}`, {
-    credentials: "include"
+    credentials: "include",
   });
 
   if (response.status === 401) {
@@ -210,10 +210,10 @@ export default function CapsuleDetailPage() {
       const response = await fetch(url, {
         method: editingId ? "PUT" : "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -252,7 +252,7 @@ export default function CapsuleDetailPage() {
         `/api/capsules/${id}/contributions/${contribution.id}`,
         {
           method: "DELETE",
-          credentials: "include"
+          credentials: "include",
         }
       );
 
@@ -292,14 +292,14 @@ export default function CapsuleDetailPage() {
       const response = await fetch(`/api/capsules/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
           name: editName,
           description: editDescription,
-          openDate: editOpenDate
-        })
+          openDate: editOpenDate,
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -327,7 +327,7 @@ export default function CapsuleDetailPage() {
     try {
       const response = await fetch(`/api/capsules/${id}`, {
         method: "DELETE",
-        credentials: "include"
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -441,7 +441,7 @@ export default function CapsuleDetailPage() {
                                 year: "numeric",
                                 month: "long",
                                 day: "numeric",
-                                timeZone: "UTC"
+                                timeZone: "UTC",
                               }
                             )}
                           </strong>

@@ -10,7 +10,7 @@ const contributionTypeLabels = {
   message: "Message",
   prediction: "Prediction",
   photo: "Photo",
-  voice: "Voice note"
+  voice: "Voice note",
 };
 
 export default function ContributionCard({
@@ -18,7 +18,7 @@ export default function ContributionCard({
   sealed = false,
   showActions = false,
   onEdit = undefined,
-  onDelete = undefined
+  onDelete = undefined,
 }) {
   return (
     <Card className="contribution-card">
@@ -92,10 +92,10 @@ ContributionCard.propTypes = {
     photoDataUrl: PropTypes.string,
     photoName: PropTypes.string,
     audioDataUrl: PropTypes.string,
-    audioName: PropTypes.string
+    audioName: PropTypes.string,
   }).isRequired,
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,
   onEdit: PropTypes.func,
-  onDelete: PropTypes.func
+  onDelete: PropTypes.func,
 };

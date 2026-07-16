@@ -10,7 +10,7 @@ const toPlain = (doc) => {
     ...doc,
     id: doc._id.toString(),
     capsuleId: doc.capsuleId.toString(),
-    authorId: doc.authorId.toString()
+    authorId: doc.authorId.toString(),
   };
 };
 
@@ -23,7 +23,7 @@ export const createContribution = async ({
   audioDataUrl,
   audioName,
   authorId,
-  authorName
+  authorName,
 }) => {
   if (!ObjectId.isValid(capsuleId)) {
     throw new Error("Invalid capsule id");
@@ -43,7 +43,7 @@ export const createContribution = async ({
     audioName: audioName || null,
     authorId: new ObjectId(authorId),
     authorName: authorName?.trim() || "Anonymous",
-    createdAt: new Date()
+    createdAt: new Date(),
   };
 
   const result = await contributionsCollection().insertOne(doc);
@@ -71,7 +71,7 @@ export const findContributionsByAuthor = async (capsuleId, authorId) => {
   const contributions = await contributionsCollection()
     .find({
       capsuleId: new ObjectId(capsuleId),
-      authorId: new ObjectId(authorId)
+      authorId: new ObjectId(authorId),
     })
     .sort({ createdAt: 1 })
     .toArray();
@@ -85,7 +85,7 @@ export const findContributionById = async (id) => {
   }
 
   const contribution = await contributionsCollection().findOne({
-    _id: new ObjectId(id)
+    _id: new ObjectId(id),
   });
 
   return toPlain(contribution);
@@ -130,7 +130,7 @@ export const deleteContribution = async (id) => {
   }
 
   const result = await contributionsCollection().deleteOne({
-    _id: new ObjectId(id)
+    _id: new ObjectId(id),
   });
 
   return result.deletedCount === 1;
@@ -142,7 +142,7 @@ export const deleteContributionsByCapsuleId = async (capsuleId) => {
   }
 
   const result = await contributionsCollection().deleteMany({
-    capsuleId: new ObjectId(capsuleId)
+    capsuleId: new ObjectId(capsuleId),
   });
 
   return result.deletedCount;

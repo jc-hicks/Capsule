@@ -13,7 +13,7 @@ export const createUser = async (user) => {
     name: user.name,
     email: normalizeEmail(user.email),
     passwordHash: user.passwordHash,
-    createdAt: new Date()
+    createdAt: new Date(),
   };
   const result = await usersCollection().insertOne(doc);
   return toPlain({ ...doc, _id: result.insertedId });
@@ -21,7 +21,7 @@ export const createUser = async (user) => {
 
 export const findUserByEmail = async (email) => {
   const user = await usersCollection().findOne({
-    email: normalizeEmail(email)
+    email: normalizeEmail(email),
   });
   return toPlain(user);
 };

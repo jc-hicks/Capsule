@@ -10,7 +10,7 @@ const toPlain = (doc, viewerId) => {
     ...doc,
     id: doc._id.toString(),
     owner,
-    locked
+    locked,
   };
   if (locked) {
     delete plain.description;
@@ -29,7 +29,7 @@ export const createCapsule = async (capsule, ownerId) => {
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
     shareCode: generateShareCode(ownerId),
-    createdAt: new Date()
+    createdAt: new Date(),
   };
   const result = await capsulesCollection().insertOne(doc);
   return toPlain({ ...doc, _id: result.insertedId }, ownerId);
@@ -38,7 +38,7 @@ export const createCapsule = async (capsule, ownerId) => {
 // Returns capsules the viewer owns as well as ones they've joined as a member.
 export const findCapsules = async (viewerId, query) => {
   const filter = {
-    $or: [{ owner: new ObjectId(viewerId) }, { members: viewerId }]
+    $or: [{ owner: new ObjectId(viewerId) }, { members: viewerId }],
   };
   if (query) {
     filter.name = { $regex: query, $options: "i" };
@@ -101,7 +101,7 @@ export const deleteCapsule = async (id, ownerId) => {
   if (!ObjectId.isValid(id)) return false;
   const result = await capsulesCollection().deleteOne({
     _id: new ObjectId(id),
-    owner: new ObjectId(ownerId)
+    owner: new ObjectId(ownerId),
   });
   return result.deletedCount > 0;
 };
