@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { contributionsCollection } from "../config/db.js";
 
-const allowedTypes = new Set(["message", "prediction", "photo"]);
+const allowedTypes = new Set(["message", "prediction", "photo", "voice"]);
 
 const toPlain = (doc) => {
   if (!doc) return null;
@@ -20,6 +20,8 @@ export const createContribution = async ({
   content,
   photoDataUrl,
   photoName,
+  audioDataUrl,
+  audioName,
   authorId,
   authorName
 }) => {
@@ -37,6 +39,8 @@ export const createContribution = async ({
     content: content?.trim() || "",
     photoDataUrl: photoDataUrl || null,
     photoName: photoName || null,
+    audioDataUrl: audioDataUrl || null,
+    audioName: audioName || null,
     authorId: new ObjectId(authorId),
     authorName: authorName?.trim() || "Anonymous",
     createdAt: new Date()
@@ -89,7 +93,7 @@ export const findContributionById = async (id) => {
 
 export const updateContribution = async (
   id,
-  { content, photoDataUrl, photoName }
+  { content, photoDataUrl, photoName, audioDataUrl, audioName }
 ) => {
   if (!ObjectId.isValid(id)) {
     throw new Error("Invalid contribution id");
@@ -104,6 +108,12 @@ export const updateContribution = async (
   }
   if (photoName !== undefined) {
     updates.photoName = photoName || null;
+  }
+  if (audioDataUrl !== undefined) {
+    updates.audioDataUrl = audioDataUrl || null;
+  }
+  if (audioName !== undefined) {
+    updates.audioName = audioName || null;
   }
 
   await contributionsCollection().updateOne(

@@ -46,6 +46,11 @@
   margin-bottom: 0.85rem;
 }
 
+.contribution-voice audio {
+  width: 100%;
+  margin-bottom: 0.35rem;
+}
+
 .contribution-actions {
   display: flex;
   gap: 0.65rem;

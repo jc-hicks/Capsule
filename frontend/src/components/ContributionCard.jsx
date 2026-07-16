@@ -9,7 +9,8 @@ import "./ContributionCard.css";
 const contributionTypeLabels = {
   message: "Message",
   prediction: "Prediction",
-  photo: "Photo"
+  photo: "Photo",
+  voice: "Voice note"
 };
 
 export default function ContributionCard({
@@ -46,6 +47,13 @@ export default function ContributionCard({
               <p className="contribution-text">{contribution.content}</p>
             )}
           </div>
+        ) : contribution.type === "voice" ? (
+          <div className="contribution-voice">
+            <audio src={contribution.audioDataUrl} controls />
+            {contribution.content && (
+              <p className="contribution-text">{contribution.content}</p>
+            )}
+          </div>
         ) : (
           <p className="contribution-text">{contribution.content}</p>
         )}
@@ -76,12 +84,15 @@ export default function ContributionCard({
 ContributionCard.propTypes = {
   contribution: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(["message", "prediction", "photo"]).isRequired,
+    type: PropTypes.oneOf(["message", "prediction", "photo", "voice"])
+      .isRequired,
     authorName: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
     content: PropTypes.string,
     photoDataUrl: PropTypes.string,
-    photoName: PropTypes.string
+    photoName: PropTypes.string,
+    audioDataUrl: PropTypes.string,
+    audioName: PropTypes.string
   }).isRequired,
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,

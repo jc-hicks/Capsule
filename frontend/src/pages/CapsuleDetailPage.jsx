@@ -11,6 +11,7 @@ import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 
 import ContributionCard from "../components/ContributionCard.jsx";
+import VoiceRecorder from "../components/VoiceRecorder.jsx";
 import "./CapsuleDetailPage.css";
 
 const readFileAsDataUrl = (file) =>
@@ -64,6 +65,8 @@ export default function CapsuleDetailPage() {
   const [type, setType] = useState("message");
   const [content, setContent] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [recorderKey, setRecorderKey] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
@@ -165,6 +168,15 @@ export default function CapsuleDetailPage() {
     setType("message");
     setContent("");
     setPhotoFile(null);
+    setAudioBlob(null);
+    setRecorderKey((key) => key + 1);
+  };
+
+  const audioExtension = (mimeType) => {
+    if (!mimeType) return "webm";
+    if (mimeType.includes("mp4")) return "m4a";
+    if (mimeType.includes("ogg")) return "ogg";
+    return "webm";
   };
 
   const handleContributionSubmit = async (e) => {
@@ -181,6 +193,13 @@ export default function CapsuleDetailPage() {
           payload.photoName = photoFile.name;
         } else if (!editingId) {
           throw new Error("Choose a photo to upload.");
+        }
+      } else if (type === "voice") {
+        if (audioBlob) {
+          payload.audioDataUrl = await readFileAsDataUrl(audioBlob);
+          payload.audioName = `voice-note.${audioExtension(audioBlob.type)}`;
+        } else if (!editingId) {
+          throw new Error("Record a voice note first.");
         }
       }
 
@@ -216,6 +235,8 @@ export default function CapsuleDetailPage() {
     setType(contribution.type);
     setContent(contribution.content || "");
     setPhotoFile(null);
+    setAudioBlob(null);
+    setRecorderKey((key) => key + 1);
     setError(null);
   };
 
@@ -480,6 +501,7 @@ export default function CapsuleDetailPage() {
                             <option value="message">Message</option>
                             <option value="prediction">Prediction</option>
                             <option value="photo">Photo</option>
+                            <option value="voice">Voice note</option>
                           </Form.Select>
                         </Form.Group>
 
@@ -502,6 +524,19 @@ export default function CapsuleDetailPage() {
                                 : "The image is stored with the capsule so it can be revealed later."}
                             </Form.Text>
                           </>
+                        ) : type === "voice" ? (
+                          <Form.Group className="mb-3">
+                            <Form.Label>Record a voice note</Form.Label>
+                            <VoiceRecorder
+                              key={recorderKey}
+                              onRecorded={setAudioBlob}
+                              existingLabel={
+                                editingId
+                                  ? "Record again to replace your saved note."
+                                  : ""
+                              }
+                            />
+                          </Form.Group>
                         ) : (
                           <Form.Group className="mb-3">
                             <Form.Label>

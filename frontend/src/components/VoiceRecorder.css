@@ -1,0 +1,54 @@
+.voice-recorder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.voice-recorder-live,
+.voice-recorder-preview,
+.voice-recorder-start {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.voice-recorder-preview audio {
+  height: 38px;
+  max-width: 100%;
+}
+
+.voice-recorder-time {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  color: #b0592f;
+}
+
+.voice-recorder-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #a83f2e;
+  animation: voice-recorder-pulse 1s infinite;
+}
+
+@keyframes voice-recorder-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.voice-recorder-hint {
+  font-size: 0.8rem;
+  color: #9a8f7d;
+}
+
+.voice-recorder-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a83f2e;
+}

@@ -140,7 +140,14 @@ router.post(
         });
       }
 
-      const { type, content, photoDataUrl, photoName } = req.body;
+      const {
+        type,
+        content,
+        photoDataUrl,
+        photoName,
+        audioDataUrl,
+        audioName
+      } = req.body;
 
       if (!isContributionType(type)) {
         return res.status(400).json({ error: "Invalid contribution type" });
@@ -152,6 +159,12 @@ router.post(
         if (!photoDataUrl) {
           return res.status(400).json({ error: "A photo file is required" });
         }
+      } else if (type === "voice") {
+        if (!audioDataUrl) {
+          return res
+            .status(400)
+            .json({ error: "A voice recording is required" });
+        }
       } else if (!trimmedContent) {
         return res.status(400).json({ error: "Content is required" });
       }
@@ -162,6 +175,8 @@ router.post(
         content: trimmedContent,
         photoDataUrl,
         photoName,
+        audioDataUrl,
+        audioName,
         authorId: req.user.id,
         authorName: req.user.name
       });
@@ -210,11 +225,18 @@ router.put(
           .json({ error: "You can only edit your own contributions" });
       }
 
-      const { content, photoDataUrl, photoName } = req.body;
+      const { content, photoDataUrl, photoName, audioDataUrl, audioName } =
+        req.body;
 
       if (contribution.type === "photo") {
         if (photoDataUrl !== undefined && !photoDataUrl) {
           return res.status(400).json({ error: "A photo file is required" });
+        }
+      } else if (contribution.type === "voice") {
+        if (audioDataUrl !== undefined && !audioDataUrl) {
+          return res
+            .status(400)
+            .json({ error: "A voice recording is required" });
         }
       } else if (
         content !== undefined &&
@@ -226,7 +248,9 @@ router.put(
       const updated = await updateContribution(req.params.contributionId, {
         content,
         photoDataUrl,
-        photoName
+        photoName,
+        audioDataUrl,
+        audioName
       });
 
       res.json(updated);
