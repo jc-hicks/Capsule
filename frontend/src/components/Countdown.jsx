@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+import "./Countdown.css";
+
 const getRemaining = (openDate) => {
   const total = new Date(openDate).getTime() - Date.now();
   if (total <= 0) return null;
@@ -35,7 +37,7 @@ export default function Countdown({ openDate, onComplete }) {
   const pad = (n) => String(n).padStart(2, "0");
 
   return (
-    <p className="capsule-countdown">
+    <p className="countdown">
       Opens in {days > 0 && `${days}d `}
       {pad(hours)}:{pad(minutes)}:{pad(seconds)}
     </p>
@@ -44,5 +46,5 @@ export default function Countdown({ openDate, onComplete }) {
 
 Countdown.propTypes = {
   openDate: PropTypes.string.isRequired,
-  onComplete: PropTypes.func,
+  onComplete: PropTypes.func
 };

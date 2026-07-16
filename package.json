@@ -12,9 +12,9 @@
     "lint": "eslint ."
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "James Hicks, Alexandra Descoteaux",
+  "license": "MIT",
+  "description": "A digital time capsule: create a capsule with an open date, invite others with a share code, and reveal the contents together once the date arrives.",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",

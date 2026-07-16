@@ -26,7 +26,7 @@ export default function CapsulesList({ capsules }) {
 CapsulesList.propTypes = {
   capsules: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     })
-  ),
+  )
 };

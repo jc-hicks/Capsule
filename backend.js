@@ -1,4 +1,5 @@
 import "dotenv/config";
+import path from "node:path";
 import express from "express";
 import passport from "./config/passport.js";
 import session from "express-session";
@@ -24,8 +25,8 @@ app.use(
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
+      maxAge: 1000 * 60 * 60 * 24 // 1 day
+    }
   })
 );
 
@@ -35,7 +36,18 @@ app.use(passport.session());
 app.use("/api", capsuleRoutes);
 app.use("/api/auth", auth);
 
-app.use("/", express.static("frontend/dist"));
+const frontendDist = path.resolve("frontend/dist");
+
+app.use("/", express.static(frontendDist));
+
+// The client router owns these paths, so a deep link or refresh has to fall back
+// to the SPA shell. Unmatched /api requests stay a JSON 404 instead of HTML.
+app.get("/*splat", (req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return next();
+  }
+  res.sendFile(path.join(frontendDist, "index.html"));
+});
 
 connectDB()
   .then(() => {

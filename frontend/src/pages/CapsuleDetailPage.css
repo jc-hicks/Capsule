@@ -158,3 +158,12 @@
   display: flex;
   gap: 0.65rem;
 }
+
+.capsule-edit-sealed-note {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid #dee2e6;
+  background: #f8f9fa;
+  color: #6c757d;
+  font-size: 0.875rem;
+}

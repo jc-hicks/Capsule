@@ -19,7 +19,7 @@ export default function Capsule({ capsule }) {
       day: "numeric",
       // openDate is a calendar date (no time); format it in UTC so it shows
       // exactly the day that was picked instead of shifting a day in local time.
-      timeZone: "UTC",
+      timeZone: "UTC"
     });
   }
 
@@ -79,6 +79,6 @@ Capsule.propTypes = {
     members: PropTypes.arrayOf(PropTypes.string),
     openDate: PropTypes.string,
     locked: PropTypes.bool,
-    shareCode: PropTypes.string,
-  }).isRequired,
+    shareCode: PropTypes.string
+  }).isRequired
 };

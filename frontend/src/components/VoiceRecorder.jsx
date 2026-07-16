@@ -54,7 +54,7 @@ export default function VoiceRecorder({ onRecorded, existingLabel = "" }) {
       };
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, {
-          type: recorder.mimeType || "audio/webm",
+          type: recorder.mimeType || "audio/webm"
         });
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
@@ -140,5 +140,5 @@ export default function VoiceRecorder({ onRecorded, existingLabel = "" }) {
 
 VoiceRecorder.propTypes = {
   onRecorded: PropTypes.func.isRequired,
-  existingLabel: PropTypes.string,
+  existingLabel: PropTypes.string
 };

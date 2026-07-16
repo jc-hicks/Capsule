@@ -47,5 +47,5 @@ export default function JoinCapsuleForm({ onJoin }) {
 }
 
 JoinCapsuleForm.propTypes = {
-  onJoin: PropTypes.func.isRequired,
+  onJoin: PropTypes.func.isRequired
 };

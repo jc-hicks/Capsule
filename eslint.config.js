@@ -7,7 +7,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
   {
-    ignores: ["frontend/dist/**", "node_modules/**", "coverage/**"],
+    ignores: ["frontend/dist/**", "node_modules/**", "coverage/**"]
   },
   {
     files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
@@ -17,18 +17,18 @@ export default [
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: {
-          jsx: true,
-        },
+          jsx: true
+        }
       },
 
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2025,
-      },
+        ...globals.es2025
+      }
     },
     plugins: {
-      prettier: prettier,
+      prettier: prettier
     },
 
     rules: {
@@ -39,8 +39,8 @@ export default [
         "error",
         2,
         {
-          SwitchCase: 1,
-        },
+          SwitchCase: 1
+        }
       ],
 
       "no-unused-vars": ["error", { ignoreRestSiblings: true }],
@@ -49,32 +49,27 @@ export default [
       semi: ["error", "always"],
       "no-console": 0,
 
-      // Prettier integration - this runs Prettier through ESLint
-      "prettier/prettier": [
-        "error",
-        {
-          endOfLine: "lf",
-          trailingComma: "es5",
-          singleQuote: false,
-        },
-      ],
-    },
+      // Prettier integration - this runs Prettier through ESLint.
+      // Options intentionally omitted so the rule reads .prettierrc, keeping
+      // `npm run lint` and `npm run format` from fighting over formatting.
+      "prettier/prettier": "error"
+    }
   },
   {
     files: ["frontend/src/**/*.{js,jsx}"],
     plugins: {
       react,
-      "react-hooks": reactHooks,
+      "react-hooks": reactHooks
     },
     settings: {
-      react: { version: "detect" },
+      react: { version: "detect" }
     },
     rules: {
       ...react.configs.flat.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       // The new JSX transform makes the React import unnecessary.
-      "react/react-in-jsx-scope": "off",
-    },
+      "react/react-in-jsx-scope": "off"
+    }
   },
-  eslintConfigPrettier,
+  eslintConfigPrettier
 ];

@@ -25,7 +25,7 @@ const readFileAsDataUrl = (file) =>
 
 const loadCapsuleData = async (capsuleId, navigate) => {
   const response = await fetch(`/api/capsules/${capsuleId}`, {
-    credentials: "include",
+    credentials: "include"
   });
 
   if (response.status === 401) {
@@ -210,10 +210,10 @@ export default function CapsuleDetailPage() {
       const response = await fetch(url, {
         method: editingId ? "PUT" : "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json().catch(() => ({}));
@@ -252,7 +252,7 @@ export default function CapsuleDetailPage() {
         `/api/capsules/${id}/contributions/${contribution.id}`,
         {
           method: "DELETE",
-          credentials: "include",
+          credentials: "include"
         }
       );
 
@@ -289,17 +289,23 @@ export default function CapsuleDetailPage() {
     setError(null);
 
     try {
+      // A sealed capsule never sends its description to the client, so there is
+      // nothing to edit and omitting it leaves the stored value untouched.
+      const updates = {
+        name: editName,
+        openDate: editOpenDate
+      };
+      if (!locked) {
+        updates.description = editDescription;
+      }
+
       const response = await fetch(`/api/capsules/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({
-          name: editName,
-          description: editDescription,
-          openDate: editOpenDate,
-        }),
+        body: JSON.stringify(updates)
       });
 
       const data = await response.json().catch(() => ({}));
@@ -327,7 +333,7 @@ export default function CapsuleDetailPage() {
     try {
       const response = await fetch(`/api/capsules/${id}`, {
         method: "DELETE",
-        credentials: "include",
+        credentials: "include"
       });
 
       if (!response.ok) {
@@ -373,25 +379,25 @@ export default function CapsuleDetailPage() {
                           disabled={savingEdit}
                         />
                       </Form.Group>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={3}
-                          value={editDescription}
-                          onChange={(event) =>
-                            setEditDescription(event.target.value)
-                          }
-                          disabled={savingEdit}
-                        />
-                        {locked && (
-                          <Form.Text className="text-muted">
-                            The description is hidden while the capsule is
-                            sealed; leaving this blank keeps the current value
-                            only if you re-enter it.
-                          </Form.Text>
-                        )}
-                      </Form.Group>
+                      {locked ? (
+                        <p className="capsule-edit-sealed-note">
+                          The description stays sealed until the open date and
+                          cannot be edited from here. Its current value is kept.
+                        </p>
+                      ) : (
+                        <Form.Group className="mb-3">
+                          <Form.Label>Description</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={editDescription}
+                            onChange={(event) =>
+                              setEditDescription(event.target.value)
+                            }
+                            disabled={savingEdit}
+                          />
+                        </Form.Group>
+                      )}
                       <Form.Group className="mb-3">
                         <Form.Label>Open date</Form.Label>
                         <Form.Control
@@ -441,7 +447,7 @@ export default function CapsuleDetailPage() {
                                 year: "numeric",
                                 month: "long",
                                 day: "numeric",
-                                timeZone: "UTC",
+                                timeZone: "UTC"
                               }
                             )}
                           </strong>
