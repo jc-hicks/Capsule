@@ -14,6 +14,7 @@ const contributionTypeLabels = {
 
 export default function ContributionCard({
   contribution,
+  sealed = false,
   showActions = false,
   onEdit = undefined,
   onDelete = undefined
@@ -31,7 +32,11 @@ export default function ContributionCard({
           </span>
         </div>
 
-        {contribution.type === "photo" ? (
+        {sealed ? (
+          <p className="contribution-sealed">
+            Sealed until the open date. Use Edit to change it before then.
+          </p>
+        ) : contribution.type === "photo" ? (
           <div className="contribution-photo">
             <img
               src={contribution.photoDataUrl}
@@ -78,6 +83,7 @@ ContributionCard.propTypes = {
     photoDataUrl: PropTypes.string,
     photoName: PropTypes.string
   }).isRequired,
+  sealed: PropTypes.bool,
   showActions: PropTypes.bool,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func

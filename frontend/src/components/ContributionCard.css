@@ -28,6 +28,12 @@
   color: #243044;
 }
 
+.contribution-sealed {
+  margin-bottom: 0;
+  font-style: italic;
+  color: #98a2b3;
+}
+
 .contribution-photo img {
   display: block;
   max-width: 100%;

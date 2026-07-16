@@ -563,11 +563,18 @@ export default function CapsuleDetailPage() {
                     <Card className="capsule-contribution-card capsule-your-contributions">
                       <Card.Body>
                         <h2>Your contributions</h2>
+                        {locked && (
+                          <p className="text-muted">
+                            Your entries stay sealed until the open date. You
+                            can edit or delete them until then.
+                          </p>
+                        )}
                         <div className="contribution-list">
                           {myContributions.map((contribution) => (
                             <ContributionCard
                               key={contribution.id}
                               contribution={contribution}
+                              sealed={locked}
                               showActions={locked}
                               onEdit={startEditContribution}
                               onDelete={handleDeleteContribution}
