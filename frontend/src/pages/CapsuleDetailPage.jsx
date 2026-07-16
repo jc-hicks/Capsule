@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import PropTypes from "prop-types";
 
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
@@ -11,13 +10,8 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 
+import ContributionCard from "../components/ContributionCard.jsx";
 import "./CapsuleDetailPage.css";
-
-const contributionTypeLabels = {
-  message: "Message",
-  prediction: "Prediction",
-  photo: "Photo"
-};
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -55,38 +49,6 @@ const formatCountdown = (milliseconds) => {
   return `${days}d ${hours}h ${minutes}m`;
 };
 
-function ContributionCard({ contribution }) {
-  return (
-    <Card className="contribution-card">
-      <Card.Body>
-        <div className="contribution-card-header">
-          <Badge bg="secondary" className="contribution-type-badge">
-            {contributionTypeLabels[contribution.type]}
-          </Badge>
-          <span className="contribution-meta">
-            {contribution.authorName} ·{" "}
-            {new Date(contribution.createdAt).toLocaleString()}
-          </span>
-        </div>
-
-        {contribution.type === "photo" ? (
-          <div className="contribution-photo">
-            <img
-              src={contribution.photoDataUrl}
-              alt={contribution.photoName || "Capsule contribution"}
-            />
-            {contribution.content && (
-              <p className="contribution-text">{contribution.content}</p>
-            )}
-          </div>
-        ) : (
-          <p className="contribution-text">{contribution.content}</p>
-        )}
-      </Card.Body>
-    </Card>
-  );
-}
-
 export default function CapsuleDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -96,17 +58,27 @@ export default function CapsuleDetailPage() {
   const [capsule, setCapsule] = useState(null);
   const [revealState, setRevealState] = useState(null);
   const [contributions, setContributions] = useState([]);
+  const [myContributions, setMyContributions] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
   const [now, setNow] = useState(0);
   const [type, setType] = useState("message");
   const [content, setContent] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editOpenDate, setEditOpenDate] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const applyData = (data) => {
+    setCapsule(data.capsule);
+    setRevealState(data.revealState);
+    setContributions(data.contributions || []);
+    setMyContributions(data.myContributions || []);
+    setIsOwner(Boolean(data.isOwner));
+  };
 
   useEffect(() => {
     const initialNow = window.setTimeout(() => setNow(Date.now()), 0);
@@ -130,10 +102,7 @@ export default function CapsuleDetailPage() {
           return;
         }
 
-        setCapsule(data.capsule);
-        setRevealState(data.revealState);
-        setContributions(data.contributions || []);
-        setIsOwner(Boolean(data.isOwner));
+        applyData(data);
       } catch (fetchError) {
         if (isMounted) {
           setError(fetchError.message);
@@ -155,45 +124,20 @@ export default function CapsuleDetailPage() {
   useEffect(() => {
     if (!revealState?.isOpen && revealState?.opensAt) {
       const openAt = new Date(revealState.opensAt).getTime();
-      if (now >= openAt) {
-        const refreshTimeout = window.setTimeout(() => {
-          void (async () => {
-            try {
-              const data = await loadCapsuleData(id, navigate);
-              if (!data) {
-                return;
-              }
-
-              setCapsule(data.capsule);
-              setRevealState(data.revealState);
-              setContributions(data.contributions || []);
-              setIsOwner(Boolean(data.isOwner));
-            } catch (refreshError) {
-              setError(refreshError.message);
-            }
-          })();
-        }, 0);
-
-        return () => window.clearTimeout(refreshTimeout);
-      }
-
-      const delay = Math.max(openAt - now, 1000);
-      const timeout = window.setTimeout(() => {
-        void (async () => {
-          try {
-            const data = await loadCapsuleData(id, navigate);
-            if (!data) {
-              return;
-            }
-
-            setCapsule(data.capsule);
-            setRevealState(data.revealState);
-            setContributions(data.contributions || []);
-            setIsOwner(Boolean(data.isOwner));
-          } catch (refreshError) {
-            setError(refreshError.message);
+      const runRefresh = async () => {
+        try {
+          const data = await loadCapsuleData(id, navigate);
+          if (data) {
+            applyData(data);
           }
-        })();
+        } catch (refreshError) {
+          setError(refreshError.message);
+        }
+      };
+
+      const delay = now >= openAt ? 0 : Math.max(openAt - now, 1000);
+      const timeout = window.setTimeout(() => {
+        void runRefresh();
       }, delay);
 
       return () => window.clearTimeout(timeout);
@@ -207,7 +151,23 @@ export default function CapsuleDetailPage() {
     return formatCountdown(openAt - now);
   }, [now, revealState]);
 
-  const handleSubmit = async (e) => {
+  const locked = !revealState?.isOpen;
+
+  const reloadCapsule = async () => {
+    const data = await loadCapsuleData(id, navigate);
+    if (data) {
+      applyData(data);
+    }
+  };
+
+  const resetContributionForm = () => {
+    setEditingId(null);
+    setType("message");
+    setContent("");
+    setPhotoFile(null);
+  };
+
+  const handleContributionSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
@@ -216,16 +176,20 @@ export default function CapsuleDetailPage() {
       const payload = { type, content };
 
       if (type === "photo") {
-        if (!photoFile) {
+        if (photoFile) {
+          payload.photoDataUrl = await readFileAsDataUrl(photoFile);
+          payload.photoName = photoFile.name;
+        } else if (!editingId) {
           throw new Error("Choose a photo to upload.");
         }
-
-        payload.photoDataUrl = await readFileAsDataUrl(photoFile);
-        payload.photoName = photoFile.name;
       }
 
-      const response = await fetch(`/api/capsules/${id}/contributions`, {
-        method: "POST",
+      const url = editingId
+        ? `/api/capsules/${id}/contributions/${editingId}`
+        : `/api/capsules/${id}/contributions`;
+
+      const response = await fetch(url, {
+        method: editingId ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json"
         },
@@ -238,14 +202,50 @@ export default function CapsuleDetailPage() {
         throw new Error(data.error || "Unable to save contribution");
       }
 
-      setContributions((current) => [...current, data]);
-      setContent("");
-      setPhotoFile(null);
-      setType("message");
+      await reloadCapsule();
+      resetContributionForm();
     } catch (submitError) {
       setError(submitError.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const startEditContribution = (contribution) => {
+    setEditingId(contribution.id);
+    setType(contribution.type);
+    setContent(contribution.content || "");
+    setPhotoFile(null);
+    setError(null);
+  };
+
+  const handleDeleteContribution = async (contribution) => {
+    if (!window.confirm("Delete this contribution?")) {
+      return;
+    }
+
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Unable to delete contribution");
+      }
+
+      if (editingId === contribution.id) {
+        resetContributionForm();
+      }
+      await reloadCapsule();
+    } catch (deleteError) {
+      setError(deleteError.message);
     }
   };
 
@@ -320,8 +320,6 @@ export default function CapsuleDetailPage() {
       setDeleting(false);
     }
   };
-
-  const locked = !revealState?.isOpen;
 
   return (
     <Row className="capsule-detail-page justify-content-center">
@@ -463,14 +461,20 @@ export default function CapsuleDetailPage() {
                 <Col xl={5}>
                   <Card className="capsule-contribution-card">
                     <Card.Body>
-                      <h2>Add a contribution</h2>
-                      <Form onSubmit={handleSubmit}>
+                      <h2>
+                        {editingId
+                          ? "Edit your contribution"
+                          : "Add a contribution"}
+                      </h2>
+                      <Form onSubmit={handleContributionSubmit}>
                         <Form.Group className="mb-3">
                           <Form.Label>Contribution type</Form.Label>
                           <Form.Select
                             value={type}
                             onChange={(event) => setType(event.target.value)}
-                            disabled={!locked || submitting}
+                            disabled={
+                              !locked || submitting || Boolean(editingId)
+                            }
                           >
                             <option value="message">Message</option>
                             <option value="prediction">Prediction</option>
@@ -492,8 +496,9 @@ export default function CapsuleDetailPage() {
                               />
                             </Form.Group>
                             <Form.Text className="text-muted">
-                              The image is stored with the capsule so it can be
-                              revealed later.
+                              {editingId
+                                ? "Leave this empty to keep the current photo, or choose a new one to replace it."
+                                : "The image is stored with the capsule so it can be revealed later."}
                             </Form.Text>
                           </>
                         ) : (
@@ -522,17 +527,55 @@ export default function CapsuleDetailPage() {
 
                         {!locked && (
                           <Alert variant="info" className="mb-3">
-                            This capsule is open, so new contributions are
-                            disabled.
+                            This capsule is open, so contributions can no longer
+                            be added or edited.
                           </Alert>
                         )}
 
-                        <Button type="submit" disabled={!locked || submitting}>
-                          {submitting ? "Saving…" : "Save contribution"}
-                        </Button>
+                        <div className="capsule-edit-actions">
+                          <Button
+                            type="submit"
+                            disabled={!locked || submitting}
+                          >
+                            {submitting
+                              ? "Saving…"
+                              : editingId
+                                ? "Update contribution"
+                                : "Save contribution"}
+                          </Button>
+                          {editingId && (
+                            <Button
+                              type="button"
+                              variant="outline-secondary"
+                              onClick={resetContributionForm}
+                              disabled={submitting}
+                            >
+                              Cancel
+                            </Button>
+                          )}
+                        </div>
                       </Form>
                     </Card.Body>
                   </Card>
+
+                  {myContributions.length > 0 && (
+                    <Card className="capsule-contribution-card capsule-your-contributions">
+                      <Card.Body>
+                        <h2>Your contributions</h2>
+                        <div className="contribution-list">
+                          {myContributions.map((contribution) => (
+                            <ContributionCard
+                              key={contribution.id}
+                              contribution={contribution}
+                              showActions={locked}
+                              onEdit={startEditContribution}
+                              onDelete={handleDeleteContribution}
+                            />
+                          ))}
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  )}
                 </Col>
 
                 <Col xl={7}>
@@ -585,15 +628,3 @@ export default function CapsuleDetailPage() {
     </Row>
   );
 }
-
-ContributionCard.propTypes = {
-  contribution: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(["message", "prediction", "photo"]).isRequired,
-    authorName: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    content: PropTypes.string,
-    photoDataUrl: PropTypes.string,
-    photoName: PropTypes.string
-  }).isRequired
-};

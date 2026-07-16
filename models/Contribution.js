@@ -59,6 +59,73 @@ export const findContributionsByCapsuleId = async (capsuleId) => {
   return contributions.map(toPlain);
 };
 
+export const findContributionsByAuthor = async (capsuleId, authorId) => {
+  if (!ObjectId.isValid(capsuleId) || !ObjectId.isValid(authorId)) {
+    return [];
+  }
+
+  const contributions = await contributionsCollection()
+    .find({
+      capsuleId: new ObjectId(capsuleId),
+      authorId: new ObjectId(authorId)
+    })
+    .sort({ createdAt: 1 })
+    .toArray();
+
+  return contributions.map(toPlain);
+};
+
+export const findContributionById = async (id) => {
+  if (!ObjectId.isValid(id)) {
+    return null;
+  }
+
+  const contribution = await contributionsCollection().findOne({
+    _id: new ObjectId(id)
+  });
+
+  return toPlain(contribution);
+};
+
+export const updateContribution = async (
+  id,
+  { content, photoDataUrl, photoName }
+) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  const updates = { updatedAt: new Date() };
+  if (content !== undefined) {
+    updates.content = content?.trim() || "";
+  }
+  if (photoDataUrl !== undefined) {
+    updates.photoDataUrl = photoDataUrl || null;
+  }
+  if (photoName !== undefined) {
+    updates.photoName = photoName || null;
+  }
+
+  await contributionsCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $set: updates }
+  );
+
+  return findContributionById(id);
+};
+
+export const deleteContribution = async (id) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  const result = await contributionsCollection().deleteOne({
+    _id: new ObjectId(id)
+  });
+
+  return result.deletedCount === 1;
+};
+
 export const deleteContributionsByCapsuleId = async (capsuleId) => {
   if (!ObjectId.isValid(capsuleId)) {
     return 0;

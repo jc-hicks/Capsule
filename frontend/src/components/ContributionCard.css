@@ -1,0 +1,42 @@
+.contribution-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(20, 28, 40, 0.08);
+}
+
+.contribution-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.contribution-type-badge {
+  text-transform: capitalize;
+}
+
+.contribution-meta {
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.contribution-text {
+  white-space: pre-wrap;
+  margin-bottom: 0;
+  color: #243044;
+}
+
+.contribution-photo img {
+  display: block;
+  max-width: 100%;
+  border-radius: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.contribution-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}

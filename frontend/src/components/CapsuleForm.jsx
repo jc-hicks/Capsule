@@ -53,5 +53,5 @@ export default function CapsuleForm({ onSubmit }) {
 }
 
 CapsuleForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };

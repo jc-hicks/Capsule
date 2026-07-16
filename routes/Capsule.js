@@ -12,9 +12,13 @@ import {
 } from "../models/Capsule.js";
 import {
   createContribution,
+  deleteContribution,
   deleteContributionsByCapsuleId,
+  findContributionById,
+  findContributionsByAuthor,
   findContributionsByCapsuleId,
-  isContributionType
+  isContributionType,
+  updateContribution
 } from "../models/Contribution.js";
 
 const router = express.Router();
@@ -91,9 +95,22 @@ router.get("/capsules/:id", isAuthenticated, async (req, res, next) => {
     const contributions = revealState.isOpen
       ? await findContributionsByCapsuleId(capsule.id)
       : [];
+    // Authors can always see (and manage) their own contributions, even while
+    // the capsule is still sealed, so they can edit or remove them before the
+    // open date locks everything in.
+    const myContributions = await findContributionsByAuthor(
+      capsule.id,
+      req.user.id
+    );
     const isOwner = capsule.owner === req.user.id;
 
-    res.json({ capsule, revealState, contributions, isOwner });
+    res.json({
+      capsule,
+      revealState,
+      contributions,
+      myContributions,
+      isOwner
+    });
   } catch (error) {
     next(error);
   }
@@ -150,6 +167,115 @@ router.post(
       });
 
       res.status(201).json(contribution);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.put(
+  "/capsules/:id/contributions/:contributionId",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (getCapsuleOpenState(capsule).isOpen) {
+        return res
+          .status(403)
+          .json({ error: "This capsule is open and can no longer be edited" });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      if (contribution.authorId !== req.user.id) {
+        return res
+          .status(403)
+          .json({ error: "You can only edit your own contributions" });
+      }
+
+      const { content, photoDataUrl, photoName } = req.body;
+
+      if (contribution.type === "photo") {
+        if (photoDataUrl !== undefined && !photoDataUrl) {
+          return res.status(400).json({ error: "A photo file is required" });
+        }
+      } else if (
+        content !== undefined &&
+        (typeof content !== "string" || !content.trim())
+      ) {
+        return res.status(400).json({ error: "Content is required" });
+      }
+
+      const updated = await updateContribution(req.params.contributionId, {
+        content,
+        photoDataUrl,
+        photoName
+      });
+
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete(
+  "/capsules/:id/contributions/:contributionId",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (getCapsuleOpenState(capsule).isOpen) {
+        return res
+          .status(403)
+          .json({ error: "This capsule is open and can no longer be edited" });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      if (contribution.authorId !== req.user.id) {
+        return res
+          .status(403)
+          .json({ error: "You can only delete your own contributions" });
+      }
+
+      await deleteContribution(req.params.contributionId);
+
+      res.status(204).end();
     } catch (error) {
       next(error);
     }
