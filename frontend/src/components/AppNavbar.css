@@ -1,0 +1,30 @@
+.app-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #ece5d6;
+  border-top: 3px solid #b0592f;
+  box-shadow: 0 2px 8px rgba(20, 28, 40, 0.04);
+  padding: 0.65rem 0;
+}
+
+.app-navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b0592f;
+}
+
+.app-navbar-brand:hover,
+.app-navbar-brand:focus {
+  color: #a83f2e;
+}
+
+.app-navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-navbar-name {
+  color: #556;
+  font-weight: 500;
+}

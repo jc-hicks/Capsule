@@ -1,8 +1,9 @@
 .countdown {
   margin-top: 0.5rem;
   margin-bottom: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #3949ab;
+  color: #b0592f;
 }

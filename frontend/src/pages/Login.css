@@ -9,9 +9,10 @@
 .auth-card {
   width: 100%;
   max-width: 420px;
-  border: none;
+  border: 1px solid #ece5d6;
+  border-top: 3px solid #b0592f;
   border-radius: 1rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px rgba(20, 28, 40, 0.06);
 }
 
 .auth-card .card-body {
@@ -20,7 +21,7 @@
 
 .auth-title {
   font-weight: 700;
-  color: #2c3e50;
+  color: #162033;
   margin-bottom: 1.5rem;
   text-align: center;
 }
