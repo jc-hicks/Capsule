@@ -6,6 +6,10 @@ A full stack website for saving memories in a time capsule.
 
 Deployed on Render: <https://capsule-s77x.onrender.com>
 
+## Slides
+
+<https://docs.google.com/presentation/d/1ecZQcJ44aZm_QCXuPGLc4gVp8-woWTznhn5odgEosRg/edit?usp=sharing>
+
 ## Authors
 
 - Alexandra (Ally) Descoteaux — Contributions and Reveal (contributions collection, full CRUD, reveal view)

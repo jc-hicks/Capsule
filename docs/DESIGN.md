@@ -77,14 +77,14 @@ Hand-drawn wireframes for the four primary screens.
 
 ### 4.1 Login / Register
 
-![Login and register mockup](mockups/login.jpg)
+![Login and register mockup](mockups/login.png)
 
 Failed credentials render an inline alert above the form. On success the user is redirected to
 the capsule list.
 
 ### 4.2 Capsule List — lock status and countdown
 
-![Capsule list mockup](mockups/capsule-list.jpg)
+![Capsule list mockup](mockups/capsule-list.png)
 
 Sealed cards show "Sealed until the open date" in place of the description and a live countdown.
 **The share code appears only on capsules the viewer owns** — it is removed server-side for
@@ -92,14 +92,14 @@ everyone else.
 
 ### 4.3 Capsule Detail — sealed
 
-![Sealed capsule detail mockup](mockups/capsule-sealed.jpg)
+![Sealed capsule detail mockup](mockups/capsule-sealed.png)
 
 Owner-only Edit and Delete controls. The count of contributions is shown; their contents are not
 sent to the client at all.
 
 ### 4.4 Capsule Detail — revealed
 
-![Revealed capsule detail mockup](mockups/capsule-revealed.jpg)
+![Revealed capsule detail mockup](mockups/capsule-revealed.png)
 
 Once the open date passes, the capsule unlocks. Its contents can be opened as a step-by-step reveal
 ceremony — one message, photo, prediction, or voice note at a time — or viewed all at once. The
