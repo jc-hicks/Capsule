@@ -145,3 +145,6 @@ Because Render serves the app over HTTPS behind a proxy, the server sets `trust 
 - Log in or register before using the capsule list and reveal pages. New passwords must be at least 8 characters, and registering logs you straight in.
 - Photos and voice notes are stored as base64 data URLs in the current implementation, so this is best for small demo files.
 - Only a capsule's owner can resolve its predictions, and only after the capsule has opened.
+
+
+================== Peer Code Review from Shorena K. Anzhilov =======================
