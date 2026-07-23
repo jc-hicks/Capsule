@@ -55,7 +55,12 @@ export default function ContributionCard({
           </div>
         ) : contribution.type === "voice" ? (
           <div className="contribution-voice">
-            <audio src={`${mediaBase}/audio`} controls preload="none" />
+            <audio
+              src={`${mediaBase}/audio`}
+              controls
+              preload="none"
+              aria-label={`Voice note from ${contribution.authorName}`}
+            />
             {contribution.content && (
               <p className="contribution-text">{contribution.content}</p>
             )}
