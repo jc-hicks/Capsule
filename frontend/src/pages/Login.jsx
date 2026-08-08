@@ -42,7 +42,7 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-wrapper">
+    <main className="auth-wrapper">
       <div className="auth-panel">
         <div className="auth-header">
           <span className="auth-logo" aria-hidden="true">
@@ -95,6 +95,6 @@ export default function Login() {
           </Card.Body>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }

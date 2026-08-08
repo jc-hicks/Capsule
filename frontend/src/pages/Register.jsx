@@ -43,7 +43,7 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-wrapper">
+    <main className="auth-wrapper">
       <div className="auth-panel">
         <div className="auth-header">
           <span className="auth-logo" aria-hidden="true">
@@ -58,7 +58,9 @@ export default function Register() {
         <Card className="auth-card">
           <Card.Body>
             <h2 className="auth-title">Create your account</h2>
-            <p className="auth-subtitle">Start preserving your memories today</p>
+            <p className="auth-subtitle">
+              Start preserving your memories today
+            </p>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formBasicName">
@@ -107,6 +109,6 @@ export default function Register() {
           </Card.Body>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }

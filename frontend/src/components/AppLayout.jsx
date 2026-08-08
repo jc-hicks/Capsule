@@ -49,7 +49,7 @@ export default function AppLayout() {
   return (
     <div className="app-shell">
       {showChrome && <AppNavbar user={user} onLogout={handleLogout} />}
-      <Container className="app-main">
+      <Container as="main" className="app-main">
         <Outlet />
       </Container>
       {showChrome && <AppFooter />}

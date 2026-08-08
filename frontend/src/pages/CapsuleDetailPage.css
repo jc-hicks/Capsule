@@ -17,7 +17,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 2rem;
-  color: #556;
+  color: #22223b;
 }
 
 .capsule-hero-card,
@@ -164,7 +164,7 @@
   padding: 0.6rem 0.75rem;
   border-left: 3px solid #dee2e6;
   background: #f8f9fa;
-  color: #6c757d;
+  color: #5c636a;
   font-size: 0.875rem;
 }
 
@@ -192,7 +192,7 @@
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.82rem;
-  color: #9a8f7d;
+  color: #6f6553;
   margin-bottom: 0.85rem;
 }
 

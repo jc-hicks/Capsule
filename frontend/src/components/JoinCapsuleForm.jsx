@@ -28,7 +28,7 @@ export default function JoinCapsuleForm({ onJoin }) {
 
   return (
     <Form className="join-capsule-form" onSubmit={handleSubmit}>
-      <h3>Join a capsule</h3>
+      <h2>Join a capsule</h2>
       <FloatingLabel controlId="shareCode" label="Share code">
         <Form.Control
           type="text"

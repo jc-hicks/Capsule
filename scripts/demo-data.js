@@ -78,7 +78,8 @@ const run = async () => {
   await capsulesCollection().insertOne({
     _id: openId,
     name: "Senior Year 2024",
-    description: "Everything we wanted to remember from our last year together.",
+    description:
+      "Everything we wanted to remember from our last year together.",
     openDate: daysFromNow(-2),
     members: [],
     owner: userId,

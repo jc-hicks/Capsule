@@ -10,3 +10,11 @@
 .app-main {
   flex: 1 0 auto;
 }
+
+.route-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--space-indigo);
+}

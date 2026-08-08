@@ -16,36 +16,60 @@ export default function IndexPage() {
   const [data, setCapsules] = useState([]);
   const [createError, setCreateError] = useState(null);
 
-  // The navbar renders the signed-in user; this only guards the page itself.
-  useEffect(() => {
-    fetch("/api/auth/user", { credentials: "include" }).then((response) => {
-      if (response.status === 401) {
-        navigate("/login");
-      }
-    });
-  }, [navigate]);
 
   const fetchCapsules = useCallback(() => {
     fetch("/api/capsules", { credentials: "include" })
       .then((response) => {
+        if (response.status === 401) {
+          navigate("/login");
+          return null;
+        }
         if (!response.ok) {
           throw new Error("Failed to load capsules");
         }
         return response.json();
       })
-      .then((data) => setCapsules(data));
-  }, []);
+      .then((data) => {
+        if (data) setCapsules(data);
+      });
+  }, [navigate]);
 
   useEffect(() => {
     fetchCapsules();
   }, [fetchCapsules]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchCapsules();
-    }, 5000);
+    let interval = null;
 
-    return () => clearInterval(interval);
+    const start = () => {
+      if (interval === null) {
+        interval = setInterval(fetchCapsules, 5000);
+      }
+    };
+
+    const stop = () => {
+      if (interval !== null) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stop();
+      } else {
+        fetchCapsules();
+        start();
+      }
+    };
+
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [fetchCapsules]);
 
   const handleSubmit = async (capsule) => {

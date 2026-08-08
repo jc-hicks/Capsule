@@ -26,7 +26,7 @@ export default function CapsuleForm({ onSubmit }) {
 
   return (
     <Form className="capsule-form" onSubmit={handleSubmit}>
-      <h3>Create a capsule</h3>
+      <h2>Create a capsule</h2>
       <FloatingLabel controlId="name" label="Name">
         <Form.Control
           type="text"

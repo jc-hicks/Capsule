@@ -58,12 +58,12 @@
 .auth-header p {
   margin: 0.5rem 0 0;
   font-size: 0.95rem;
-  color: var(--dusty-grape);
+  color: var(--space-indigo);
 }
 
 .auth-card {
   width: 100%;
-  border: 1px solid var(--parchment);
+  border: 1px solid var(--dusty-grape);
   border-top: 3px solid var(--space-indigo);
   background-color: var(--parchment);
   border-radius: 1rem;
@@ -86,7 +86,7 @@
   margin-bottom: 1.5rem;
   text-align: center;
   font-size: 0.875rem;
-  color: var(--lilac-ash);
+  color: var(--dusty-grape);
 }
 
 .auth-actions {
@@ -109,8 +109,5 @@
 .auth-footer {
   margin-top: 1.25rem;
   text-align: center;
-  color: var(--lilac-ash);
+  color: var(--dusty-grape);
 }
-
-/* The auth backdrop lives on .app-shell-auth in AppLayout.css so it reaches
-   the viewport edges — this wrapper sits inside a width-capped Container. */
