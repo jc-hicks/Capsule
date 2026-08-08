@@ -1,8 +1,9 @@
+@import "../styles/palette.css";
+
 .app-navbar {
-  background: #ffffff;
-  border-bottom: 1px solid #ece5d6;
-  border-top: 3px solid #b0592f;
-  box-shadow: 0 2px 8px rgba(20, 28, 40, 0.04);
+  background: transparent;
+  border-bottom: 1px solid var(--lilac-ash);
+  border-top: 3px solid var(--space-indigo);
   padding: 0.65rem 0;
 }
 
@@ -10,12 +11,12 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b0592f;
+  color: var(--space-indigo);
 }
 
 .app-navbar-brand:hover,
 .app-navbar-brand:focus {
-  color: #a83f2e;
+  color: var(--dusty-grape);
 }
 
 .app-navbar-user {
@@ -25,6 +26,18 @@
 }
 
 .app-navbar-name {
-  color: #556;
+  color: var(--space-indigo);
   font-weight: 500;
+}
+
+.app-navbar .btn-outline-secondary {
+  border-color: var(--dusty-grape);
+  color: var(--space-indigo);
+}
+
+.app-navbar .btn-outline-secondary:hover,
+.app-navbar .btn-outline-secondary:focus {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
 }

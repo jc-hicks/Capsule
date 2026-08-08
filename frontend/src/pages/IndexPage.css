@@ -1,3 +1,5 @@
+@import "../styles/palette.css";
+
 .index-page {
   padding: 2rem 0;
 }
@@ -9,13 +11,13 @@
   flex-wrap: wrap;
   gap: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #ece5d6;
+  border-bottom: 1px solid var(--dusty-grape);
   margin-bottom: 1rem;
 }
 
 .index-header h1 {
   font-weight: 700;
-  color: #162033;
+  color: var(--space-indigo);
   margin: 0;
 }
 
@@ -26,7 +28,8 @@
   margin-top: 1rem;
 }
 
-.index-forms .capsule-form {
+.index-forms .capsule-form,
+.index-forms .join-capsule-form {
   flex: 1 1 20rem;
   margin-top: 0;
 }

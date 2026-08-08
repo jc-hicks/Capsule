@@ -1,8 +1,11 @@
+@import "../styles/palette.css";
+
 .join-capsule-form {
-  background: #ffffff;
-  border: 1px solid #ece5d6;
+  background: var(--parchment);
+  border: 1px solid var(--parchment);
+  border-top: 3px solid var(--space-indigo);
   border-radius: 0.75rem;
-  box-shadow: 0 6px 18px rgba(20, 28, 40, 0.06);
+  box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
   padding: 1.5rem;
   margin-top: 1rem;
 }
@@ -10,11 +13,16 @@
 .join-capsule-form h3 {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #162033;
+  color: var(--space-indigo);
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
-  border-bottom: 2px solid #b0592f;
+  border-bottom: 2px solid var(--space-indigo);
   display: inline-block;
+}
+
+.join-capsule-form .form-label {
+  font-weight: 500;
+  color: var(--space-indigo);
 }
 
 .join-capsule-form .form-floating {
@@ -23,6 +31,13 @@
 
 .join-capsule-form .btn {
   width: 100%;
+  background-color: var(--space-indigo);
+  color: var(--parchment);
+  border: none;
+}
+
+.join-capsule-form .btn:hover {
+  background-color: var(--dusty-grape);
 }
 
 .join-capsule-error {

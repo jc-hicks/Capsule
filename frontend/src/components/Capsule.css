@@ -1,8 +1,12 @@
+@import "../styles/palette.css";
+
 .capsule-card {
   height: 100%;
-  border: 1px solid #ece5d6;
+  background: var(--parchment);
+  border: 1px solid var(--parchment);
+  border-top: 3px solid var(--space-indigo);
   border-radius: 0.75rem;
-  box-shadow: 0 6px 18px rgba(20, 28, 40, 0.06);
+  box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
@@ -10,16 +14,16 @@
 
 .capsule-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(20, 28, 40, 0.12);
+  box-shadow: 0 10px 24px rgba(34, 34, 59, 0.16);
 }
 
 .capsule-card .card-title {
   font-weight: 600;
-  color: #162033;
+  color: var(--space-indigo);
 }
 
 .capsule-card .capsule-description {
-  color: #556;
+  color: var(--dusty-grape);
 }
 
 .capsule-members {
@@ -30,9 +34,9 @@
 }
 
 .capsule-member {
-  background: #fbf7ef;
-  border: 1px solid #ece5d6;
-  color: #b0592f;
+  background: var(--parchment);
+  border: 1px solid var(--dusty-grape);
+  color: var(--space-indigo);
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
   font-size: 0.8rem;
@@ -43,23 +47,36 @@
   margin-bottom: 0;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #556;
+  color: var(--dusty-grape);
 }
 
 .capsule-sealed {
   font-style: italic;
-  color: #98a2b3;
+  color: var(--dusty-grape);
 }
 
 .capsule-share-code {
   margin-bottom: 0.25rem;
   font-size: 0.85rem;
-  color: #556;
+  color: var(--dusty-grape);
 }
 
 .capsule-share-code span {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: #b0592f;
+  color: var(--space-indigo);
+}
+
+.capsule-card .btn-outline-primary {
+  margin-top: 0.35rem;
+  border-color: var(--dusty-grape);
+  color: var(--space-indigo);
+}
+
+.capsule-card .btn-outline-primary:hover,
+.capsule-card .btn-outline-primary:focus {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
 }

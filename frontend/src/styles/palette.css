@@ -1,0 +1,10 @@
+/* Single source of truth for the palette. Import this from a component's own
+   stylesheet rather than re-declaring the variables. */
+:root {
+  /* CSS HEX */
+  --space-indigo: #22223bff;
+  --dusty-grape: #4a4e69ff;
+  --lilac-ash: #9a8c98ff;
+  --almond-silk: #c9ada7ff;
+  --parchment: #f2e9e4ff;
+}

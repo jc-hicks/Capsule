@@ -1,11 +1,4 @@
-:root {
-  /* CSS HEX */
-  --space-indigo: #22223bff;
-  --dusty-grape: #4a4e69ff;
-  --lilac-ash: #9a8c98ff;
-  --almond-silk: #c9ada7ff;
-  --parchment: #f2e9e4ff;
-}
+@import "../styles/palette.css";
 
 .auth-wrapper {
   display: flex;
@@ -119,6 +112,5 @@
   color: var(--lilac-ash);
 }
 
-body {
-  background-color: var(--almond-silk);
-}
+/* The auth backdrop lives on .app-shell-auth in AppLayout.css so it reaches
+   the viewport edges — this wrapper sits inside a width-capped Container. */
