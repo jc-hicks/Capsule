@@ -1,3 +1,12 @@
+:root {
+  /* CSS HEX */
+  --space-indigo: #22223bff;
+  --dusty-grape: #4a4e69ff;
+  --lilac-ash: #9a8c98ff;
+  --almond-silk: #c9ada7ff;
+  --parchment: #f2e9e4ff;
+}
+
 .auth-wrapper {
   display: flex;
   justify-content: center;
@@ -6,11 +15,64 @@
   padding: 1.5rem;
 }
 
-.auth-card {
+/* Header and card share one centered column so they move together. */
+.auth-panel {
   width: 100%;
   max-width: 420px;
-  border: 1px solid #ece5d6;
-  border-top: 3px solid #b0592f;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--space-indigo);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--space-indigo);
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background-color: var(--space-indigo);
+  color: var(--parchment);
+  box-shadow: 0 4px 12px rgba(34, 34, 59, 0.25);
+}
+
+.auth-logo svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.auth-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.auth-header p {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--dusty-grape);
+}
+
+.auth-card {
+  width: 100%;
+  border: 1px solid var(--parchment);
+  border-top: 3px solid var(--space-indigo);
+  background-color: var(--parchment);
   border-radius: 1rem;
   box-shadow: 0 6px 18px rgba(20, 28, 40, 0.06);
 }
@@ -20,10 +82,18 @@
 }
 
 .auth-title {
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #162033;
+  color: var(--space-indigo);
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.auth-subtitle {
   margin-bottom: 1.5rem;
   text-align: center;
+  font-size: 0.875rem;
+  color: var(--lilac-ash);
 }
 
 .auth-actions {
@@ -34,10 +104,21 @@
 
 .auth-actions .btn {
   flex: 1;
+  background-color: var(--space-indigo);
+  color: var(--parchment);
+  border: none;
+}
+
+.auth-actions .btn:hover {
+  background-color: var(--dusty-grape);
 }
 
 .auth-footer {
   margin-top: 1.25rem;
   text-align: center;
-  color: #666;
+  color: var(--lilac-ash);
+}
+
+body {
+  background-color: var(--almond-silk);
 }

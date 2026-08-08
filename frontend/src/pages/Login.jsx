@@ -43,45 +43,58 @@ export default function Login() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card">
-        <Card.Body>
-          <h2 className="auth-title">Welcome back</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Form.Group>
+      <div className="auth-panel">
+        <div className="auth-header">
+          <span className="auth-logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+          </span>
+          <h1>Capsule</h1>
+          <p>Create a digital time capsule for your memories!</p>
+        </div>
+        <Card className="auth-card">
+          <Card.Body>
+            <h2 className="auth-title">Welcome back</h2>
+            <p className="auth-subtitle">Log in to open your capsules</p>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label className="form-label">Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label className="form-label">Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Form.Group>
 
-            <div className="auth-actions">
-              <Button variant="primary" type="submit" disabled={submitting}>
-                {submitting ? "Submitting…" : "Log in"}
-              </Button>
+              <div className="auth-actions">
+                <Button variant="primary" type="submit" disabled={submitting}>
+                  {submitting ? "Submitting…" : "Log in"}
+                </Button>
 
-              <Button as={Link} to="/register" variant="outline-secondary">
-                Register
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+                <Button as={Link} to="/register" variant="outline-secondary">
+                  Register
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
     </div>
   );
 }
