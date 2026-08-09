@@ -6,6 +6,9 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 
+import PolaroidWall from "../components/PolaroidWall";
+
+import "../components/PolaroidWall.css";
 import "./Login.css";
 
 export default function Login() {
@@ -43,6 +46,7 @@ export default function Login() {
 
   return (
     <main className="auth-wrapper">
+      <PolaroidWall />
       <div className="auth-panel">
         <div className="auth-header">
           <span className="auth-logo" aria-hidden="true">

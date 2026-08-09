@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/palette.css";
 
 import AppLayout from "./components/AppLayout.jsx";
 import IndexPage from "./pages/IndexPage.jsx";

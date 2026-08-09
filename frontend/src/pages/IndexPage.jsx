@@ -16,7 +16,6 @@ export default function IndexPage() {
   const [data, setCapsules] = useState([]);
   const [createError, setCreateError] = useState(null);
 
-
   const fetchCapsules = useCallback(() => {
     fetch("/api/capsules", { credentials: "include" })
       .then((response) => {

@@ -1,0 +1,54 @@
+@import "../styles/palette.css";
+
+.polaroid-wall {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 780px;
+  height: min(88vh, 820px);
+}
+
+.polaroid {
+  position: absolute;
+  width: 22%;
+  min-width: 120px;
+  margin: 0;
+  padding: 0.2rem 0.2rem 2rem;
+  background-color: var(--parchment);
+  border-radius: 2px;
+  box-shadow: 0 10px 24px rgba(34, 34, 59, 0.18);
+  opacity: 0;
+  animation: polaroid-fade-in 700ms ease-out var(--delay, 0ms) forwards;
+}
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background-color: var(--almond-silk);
+}
+
+@keyframes polaroid-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(18px) rotate(0deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--tilt, 0deg)) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .polaroid {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--tilt, 0deg));
+  }
+}
+
+@media (max-width: 991.98px) {
+  .polaroid-wall {
+    display: none;
+  }
+}

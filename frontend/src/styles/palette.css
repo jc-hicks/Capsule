@@ -7,4 +7,23 @@
   --lilac-ash: #9a8c98ff;
   --almond-silk: #c9ada7ff;
   --parchment: #f2e9e4ff;
+
+  --font-sans: "Lilex", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+body,
+.btn,
+.form-control,
+.form-select,
+.form-label,
+.input-group-text,
+.navbar,
+.card,
+.alert,
+.modal,
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: var(--font-sans);
 }
