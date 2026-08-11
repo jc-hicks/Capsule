@@ -1,16 +1,18 @@
 import { useMemo } from "react";
 
 const PHOTOS = [
-  "/photos/capsule-1.jpg",
-  "/photos/capsule-2.jpg",
-  "/photos/capsule-3.jpg",
-  "/photos/capsule-4.jpg",
-  "/photos/capsule-5.jpg",
-  "/photos/capsule-6.jpg",
-  "/photos/capsule-7.jpg",
-  "/photos/capsule-8.jpg",
-  "/photos/capsule-9.jpg"
+  "capsule-1",
+  "capsule-2",
+  "capsule-3",
+  "capsule-4",
+  "capsule-5",
+  "capsule-6",
+  "capsule-7",
+  "capsule-8",
+  "capsule-9"
 ];
+
+const SIZES = "172px";
 
 const MAX_TILT = 9;
 const EDGE_INSET = 14;
@@ -27,8 +29,7 @@ function scatter(count) {
   const radius = ((max - min) / 2) * RING_INSET;
 
   const points = Array.from({ length: count }, (_, index) => {
-    const angle =
-      (index / count) * Math.PI * 2 + between(-0.6, 0.6);
+    const angle = (index / count) * Math.PI * 2 + between(-0.6, 0.6);
     const distance = radius * Math.sqrt(between(0.05, 1));
 
     return {
@@ -78,12 +79,12 @@ export default function PolaroidWall() {
 
   return (
     <div className="polaroid-wall" aria-hidden="true">
-      {PHOTOS.map((src, index) => {
+      {PHOTOS.map((name, index) => {
         const { x, y, tilt, delay } = layout[index];
 
         return (
           <figure
-            key={src}
+            key={name}
             className="polaroid"
             style={{
               left: `${x}%`,
@@ -92,7 +93,21 @@ export default function PolaroidWall() {
               "--delay": `${delay}ms`
             }}
           >
-            <img src={src} alt="" loading="lazy" />
+            <picture>
+              <source
+                type="image/avif"
+                sizes={SIZES}
+                srcSet={`/photos/${name}-360.avif 360w, /photos/${name}-720.avif 720w`}
+              />
+              <img
+                src={`/photos/${name}-360.jpg`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                width="360"
+                height="360"
+              />
+            </picture>
           </figure>
         );
       })}

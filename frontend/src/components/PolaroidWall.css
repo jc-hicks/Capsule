@@ -20,9 +20,14 @@
   animation: polaroid-fade-in 700ms ease-out var(--delay, 0ms) forwards;
 }
 
+.polaroid picture {
+  display: block;
+}
+
 .polaroid img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   background-color: var(--almond-silk);
