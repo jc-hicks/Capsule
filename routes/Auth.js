@@ -8,7 +8,7 @@ import { findUserByEmail, createUser } from "../models/User.js";
 const router = express.Router();
 
 router.post("/register", async (req, res, next) => {
-  const { email, password, name } = req.body;
+  const { email, password, confirmPassword, name } = req.body;
 
   if (!email || !password || !name) {
     return res.status(400).json({ message: "All fields are required" });
@@ -18,6 +18,10 @@ router.post("/register", async (req, res, next) => {
     return res
       .status(400)
       .json({ message: "Password must be at least 8 characters" });
+  }
+
+  if (confirmPassword !== undefined && password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
   }
 
   try {

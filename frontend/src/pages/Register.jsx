@@ -13,19 +13,29 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const passwordsMismatch =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password, confirmPassword })
       });
 
       const data = await response.json().catch(() => ({}));
@@ -96,8 +106,31 @@ export default function Register() {
                 />
               </Form.Group>
 
+              <Form.Group className="mb-3" controlId="formConfirmPassword">
+                <Form.Label className="form-label">Confirm password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Re-enter password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  isInvalid={passwordsMismatch}
+                  aria-describedby="confirmPasswordFeedback"
+                />
+                <Form.Control.Feedback
+                  type="invalid"
+                  id="confirmPasswordFeedback"
+                >
+                  Passwords do not match
+                </Form.Control.Feedback>
+              </Form.Group>
+
               <div className="auth-actions">
-                <Button variant="primary" type="submit" disabled={submitting}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={submitting || passwordsMismatch}
+                >
                   {submitting ? "Submitting…" : "Register"}
                 </Button>
               </div>

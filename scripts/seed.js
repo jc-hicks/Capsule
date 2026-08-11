@@ -131,7 +131,7 @@ const seed = async () => {
     for (let m = 0; m < memberCount; m += 1) {
       members.push(pick(memberPool)._id.toString());
     }
-   const phase = i % 3;
+    const phase = i % 3;
     const openDate =
       phase === 0 ? dateOffsetDays(-800, -1) : dateOffsetDays(30, 800);
     const submissionDeadline =

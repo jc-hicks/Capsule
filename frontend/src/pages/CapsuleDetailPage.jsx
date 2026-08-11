@@ -133,8 +133,6 @@ export default function CapsuleDetailPage() {
   useEffect(() => {
     if (!revealState) return undefined;
 
-    // Refresh at whichever boundary comes next: submissions closing, then the
-    // reveal. Both flip server-derived state the page renders from.
     const boundaries = [];
     if (!revealState.submissionsClosed && revealState.submissionsCloseAt) {
       boundaries.push(new Date(revealState.submissionsCloseAt).getTime());
