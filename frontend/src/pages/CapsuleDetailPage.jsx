@@ -343,7 +343,11 @@ export default function CapsuleDetailPage() {
         throw new Error(data.error || "Unable to update capsule");
       }
 
-      setCapsule(data);
+      // A capsule's locked state, countdown, and reveal contents all derive
+      // from revealState, which this response doesn't include — reload the
+      // full payload so an open-date edit that relocks (or unlocks) the
+      // capsule is reflected immediately instead of only after a refresh.
+      await reloadCapsule();
       setIsEditing(false);
     } catch (updateError) {
       setError(updateError.message);
