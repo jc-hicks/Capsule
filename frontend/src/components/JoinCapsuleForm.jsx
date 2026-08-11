@@ -7,8 +7,8 @@ import Button from "react-bootstrap/Button";
 
 import "./JoinCapsuleForm.css";
 
-export default function JoinCapsuleForm({ onJoin }) {
-  const [code, setCode] = useState("");
+export default function JoinCapsuleForm({ onJoin, initialCode = "" }) {
+  const [code, setCode] = useState(initialCode);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
 
@@ -47,5 +47,6 @@ export default function JoinCapsuleForm({ onJoin }) {
 }
 
 JoinCapsuleForm.propTypes = {
-  onJoin: PropTypes.func.isRequired
+  onJoin: PropTypes.func.isRequired,
+  initialCode: PropTypes.string
 };

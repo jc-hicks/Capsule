@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 
@@ -76,6 +77,8 @@ export default function CapsuleDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [revealMode, setRevealMode] = useState("intro");
   const [ceremonyIndex, setCeremonyIndex] = useState(0);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [copiedField, setCopiedField] = useState(null);
 
   const applyData = (data) => {
     setCapsule(data.capsule);
@@ -349,6 +352,24 @@ export default function CapsuleDetailPage() {
     }
   };
 
+  const inviteLink = capsule?.shareCode
+    ? `${window.location.origin}/?code=${capsule.shareCode}`
+    : "";
+  const inviteMessage = capsule?.shareCode
+    ? `Join my capsule "${capsule.name}" on Capsule: ${inviteLink} (or enter code ${capsule.shareCode})`
+    : "";
+
+  const copyInviteField = async (field, text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      window.prompt("Copy this:", text);
+      return;
+    }
+    setCopiedField(field);
+    window.setTimeout(() => setCopiedField(null), 2000);
+  };
+
   const handleDelete = async () => {
     if (!window.confirm("Delete this capsule and all its contributions?")) {
       return;
@@ -487,6 +508,31 @@ export default function CapsuleDetailPage() {
                           ? "Contributions are collected now, but the contents stay sealed until the open date."
                           : "The capsule is open. Contributions and reveal content are visible below."}
                       </div>
+
+                      {isOwner && capsule.shareCode && (
+                        <div className="capsule-invite">
+                          <div className="capsule-invite-label">
+                            Share this code to invite someone
+                          </div>
+                          <div className="capsule-invite-row">
+                            <code className="capsule-invite-code">
+                              {capsule.shareCode}
+                            </code>
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={() => setShowInviteModal(true)}
+                            >
+                              Share invite
+                            </Button>
+                          </div>
+                          <p className="capsule-invite-validity">
+                            This code works {locked ? "now and " : ""}any time
+                            after the capsule opens too — it doesn&apos;t
+                            expire.
+                          </p>
+                        </div>
+                      )}
 
                       {isOwner && (
                         <div className="capsule-owner-actions">
@@ -775,6 +821,60 @@ export default function CapsuleDetailPage() {
                   </Card>
                 </Col>
               </Row>
+
+              <Modal
+                show={showInviteModal}
+                onHide={() => setShowInviteModal(false)}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>
+                    Invite someone to &quot;{capsule.name}&quot;
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p className="invite-modal-hint">
+                    Copy this and send it however you&apos;d like — text, email,
+                    whatever&apos;s easiest. This code doesn&apos;t expire, so
+                    it&apos;ll still work even after the capsule opens.
+                  </p>
+                  <p className="invite-modal-message">{inviteMessage}</p>
+                  <Button
+                    className="mb-3"
+                    onClick={() => copyInviteField("message", inviteMessage)}
+                  >
+                    {copiedField === "message" ? "Copied!" : "Copy message"}
+                  </Button>
+
+                  <div className="invite-modal-field">
+                    <div>
+                      <div className="invite-modal-field-label">Link only</div>
+                      <code>{inviteLink}</code>
+                    </div>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => copyInviteField("link", inviteLink)}
+                    >
+                      {copiedField === "link" ? "Copied!" : "Copy link"}
+                    </Button>
+                  </div>
+
+                  <div className="invite-modal-field">
+                    <div>
+                      <div className="invite-modal-field-label">Code only</div>
+                      <code>{capsule.shareCode}</code>
+                    </div>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => copyInviteField("code", capsule.shareCode)}
+                    >
+                      {copiedField === "code" ? "Copied!" : "Copy code"}
+                    </Button>
+                  </div>
+                </Modal.Body>
+              </Modal>
             </>
           ) : null}
         </div>

@@ -76,6 +76,81 @@
   color: #243b63;
 }
 
+.capsule-invite {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  border: 1px dashed #b0592f;
+  background: rgba(176, 89, 47, 0.08);
+}
+
+.capsule-invite-label {
+  font-weight: 600;
+  color: #7a3d1f;
+  margin-bottom: 0.5rem;
+}
+
+.capsule-invite-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.invite-modal-hint {
+  color: #556;
+}
+
+.invite-modal-message {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  background: #f7f3ea;
+  border: 1px solid #ece5d6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.invite-modal-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid #ece5d6;
+}
+
+.invite-modal-field code {
+  overflow-wrap: anywhere;
+}
+
+.invite-modal-field-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8a8272;
+  margin-bottom: 0.15rem;
+}
+
+.capsule-invite-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #b0592f;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+}
+
+.capsule-invite-validity {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: #7a3d1f;
+}
+
 .capsule-detail-grid {
   align-items: start;
 }

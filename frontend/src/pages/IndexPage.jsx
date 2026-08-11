@@ -16,6 +16,18 @@ export default function IndexPage() {
   const [data, setCapsules] = useState([]);
   const [createError, setCreateError] = useState(null);
 
+  // Lets an invite link like "/?code=ABCD1234" (from the copy-invite button
+  // on a capsule's detail page) land here with the share code pre-filled.
+  const [initialCode] = useState(
+    () => new URLSearchParams(window.location.search).get("code") || ""
+  );
+
+  useEffect(() => {
+    if (initialCode) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [initialCode]);
+
   const fetchCapsules = useCallback(() => {
     fetch("/api/capsules", { credentials: "include" })
       .then((response) => {
@@ -140,7 +152,7 @@ export default function IndexPage() {
           </Alert>
         )}
         <div className="index-forms">
-          <JoinCapsuleForm onJoin={handleJoin} />
+          <JoinCapsuleForm onJoin={handleJoin} initialCode={initialCode} />
           <CapsuleForm onSubmit={handleSubmit} />
         </div>
       </Col>
