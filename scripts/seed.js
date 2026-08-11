@@ -131,15 +131,21 @@ const seed = async () => {
     for (let m = 0; m < memberCount; m += 1) {
       members.push(pick(memberPool)._id.toString());
     }
-    // Roughly half locked (future) and half open (past) so the reveal view
-    // can be demoed either way.
+    const phase = i % 3;
     const openDate =
-      i % 2 === 0 ? dateOffsetDays(-800, -1) : dateOffsetDays(30, 800);
+      phase === 0 ? dateOffsetDays(-800, -1) : dateOffsetDays(30, 800);
+    const submissionDeadline =
+      phase === 1
+        ? dateOffsetDays(-60, -1)
+        : new Date(
+            new Date(openDate).getTime() - 7 * 24 * 60 * 60 * 1000
+          ).toISOString();
     return {
       _id: new ObjectId(),
       name: `${pick(CAPSULE_THEMES)} ${2018 + (i % 12)}`,
       description: `A shared time capsule with ${members.length} invited members.`,
       openDate,
+      submissionDeadline,
       members: [...new Set(members)],
       owner: owner._id,
       shareCode: generateShareCode(owner._id.toString()),

@@ -81,6 +81,7 @@ const run = async () => {
     description:
       "Everything we wanted to remember from our last year together.",
     openDate: daysFromNow(-2),
+    submissionDeadline: daysFromNow(-9),
     members: [],
     owner: userId,
     shareCode: generateShareCode(userId.toString()),
@@ -129,6 +130,7 @@ const run = async () => {
     name: "New Year 2030 Goals",
     description: "Sealed until we can see how well we predicted the future.",
     openDate: daysFromNow(120),
+    submissionDeadline: daysFromNow(90),
     members: [],
     owner: userId,
     shareCode: generateShareCode(userId.toString()),

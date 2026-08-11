@@ -78,18 +78,9 @@ export default function Capsule({ capsule }) {
             {isOwner ? "Owner" : "Member"}
           </span>
         </div>
-        {isLocked ? (
-          <Card.Text className="capsule-description capsule-sealed">
-            Sealed until the open date.
-          </Card.Text>
-        ) : (
-          <Card.Text className="capsule-description">
-            {capsule.description}
-          </Card.Text>
-        )}
-        {isLocked && capsule.openDate && (
-          <Countdown openDate={capsule.openDate} />
-        )}
+        <Card.Text className="capsule-description">
+          {capsule.description}
+        </Card.Text>
         {capsule.shareCode && (
           <Card.Text className="capsule-share-code">
             Share code: <span>{capsule.shareCode}</span>
@@ -144,10 +135,17 @@ export default function Capsule({ capsule }) {
             ))}
           </div>
         )}
-        {openLabel && (
-          <p className="capsule-open-date">
-            {isLocked ? "Opens" : "Opened"} {openLabel}
-          </p>
+        {(openLabel || (isLocked && capsule.openDate)) && (
+          <div className="capsule-schedule">
+            {openLabel && (
+              <p className="capsule-open-date">
+                {isLocked ? "Opens" : "Opened"} {openLabel}
+              </p>
+            )}
+            {isLocked && capsule.openDate && (
+              <Countdown openDate={capsule.openDate} />
+            )}
+          </div>
         )}
         <Button
           as={Link}
@@ -169,6 +167,7 @@ Capsule.propTypes = {
     description: PropTypes.string,
     memberNames: PropTypes.arrayOf(PropTypes.string),
     openDate: PropTypes.string,
+    submissionDeadline: PropTypes.string,
     locked: PropTypes.bool,
     shareCode: PropTypes.string
   }).isRequired

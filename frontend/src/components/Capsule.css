@@ -78,16 +78,19 @@
   font-size: 0.8rem;
 }
 
-.capsule-open-date {
+.capsule-schedule {
   margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.capsule-open-date {
+  margin-top: 0;
   margin-bottom: 0;
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--dusty-grape);
-}
-
-.capsule-sealed {
-  font-style: italic;
   color: var(--dusty-grape);
 }
 

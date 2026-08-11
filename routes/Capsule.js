@@ -88,10 +88,20 @@ const getCapsuleOpenState = (capsule) => {
   const now = new Date();
   const isOpen = openDate <= now;
 
+  const deadlineValue = capsule.submissionDeadline || capsule.openDate;
+  const submissionDeadline = new Date(deadlineValue);
+  const submissionsClosed = submissionDeadline <= now;
+
   return {
     isOpen,
     opensAt: openDate.toISOString(),
-    millisecondsUntilOpen: Math.max(openDate.getTime() - now.getTime(), 0)
+    millisecondsUntilOpen: Math.max(openDate.getTime() - now.getTime(), 0),
+    submissionsClosed,
+    submissionsCloseAt: submissionDeadline.toISOString(),
+    millisecondsUntilClose: Math.max(
+      submissionDeadline.getTime() - now.getTime(),
+      0
+    )
   };
 };
 
@@ -186,9 +196,9 @@ router.post(
       }
 
       const revealState = getCapsuleOpenState(capsule);
-      if (revealState.isOpen) {
+      if (revealState.submissionsClosed) {
         return res.status(403).json({
-          error: "This capsule is open and no longer accepting contributions"
+          error: "Submissions for this capsule have closed"
         });
       }
 
@@ -257,10 +267,10 @@ router.put(
           .json({ error: "You do not have access to this capsule" });
       }
 
-      if (getCapsuleOpenState(capsule).isOpen) {
-        return res
-          .status(403)
-          .json({ error: "This capsule is open and can no longer be edited" });
+      if (getCapsuleOpenState(capsule).submissionsClosed) {
+        return res.status(403).json({
+          error: "Submissions for this capsule have closed"
+        });
       }
 
       const contribution = await findContributionById(
@@ -329,10 +339,10 @@ router.delete(
           .json({ error: "You do not have access to this capsule" });
       }
 
-      if (getCapsuleOpenState(capsule).isOpen) {
-        return res
-          .status(403)
-          .json({ error: "This capsule is open and can no longer be edited" });
+      if (getCapsuleOpenState(capsule).submissionsClosed) {
+        return res.status(403).json({
+          error: "Submissions for this capsule have closed"
+        });
       }
 
       const contribution = await findContributionById(
@@ -435,15 +445,21 @@ router.get(
 );
 
 router.post("/capsules", isAuthenticated, async (req, res, next) => {
-  const { name, description, openDate } = req.body;
+  const { name, description, openDate, submissionDeadline } = req.body;
 
-  if (!name || !description || !openDate) {
+  if (!name || !description || !openDate || !submissionDeadline) {
     return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  if (new Date(submissionDeadline) > new Date(openDate)) {
+    return res.status(400).json({
+      error: "Submissions must close on or before the open date"
+    });
   }
 
   try {
     const newCapsule = await createCapsule(
-      { name, description, openDate },
+      { name, description, openDate, submissionDeadline },
       req.user.id
     );
     res.status(201).json(newCapsule);
@@ -466,20 +482,43 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
         .json({ error: "Only the owner can update this capsule" });
     }
 
-    const { name, description, openDate } = req.body;
+    if (getCapsuleOpenState(capsule).submissionsClosed) {
+      return res.status(403).json({
+        error:
+          "Submissions have closed and this capsule can no longer be edited"
+      });
+    }
+
+    const { name, description, openDate, submissionDeadline } = req.body;
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (description !== undefined) updates.description = description;
     if (openDate !== undefined) updates.openDate = openDate;
+    if (submissionDeadline !== undefined) {
+      updates.submissionDeadline = submissionDeadline;
+    }
 
     if (
       (updates.name !== undefined && !updates.name) ||
       (updates.description !== undefined && !updates.description) ||
-      (updates.openDate !== undefined && !updates.openDate)
+      (updates.openDate !== undefined && !updates.openDate) ||
+      (updates.submissionDeadline !== undefined && !updates.submissionDeadline)
     ) {
       return res
         .status(400)
         .json({ error: "Fields cannot be set to empty values" });
+    }
+
+    const nextOpenDate = updates.openDate ?? capsule.openDate;
+    const nextDeadline =
+      updates.submissionDeadline ??
+      capsule.submissionDeadline ??
+      capsule.openDate;
+
+    if (new Date(nextDeadline) > new Date(nextOpenDate)) {
+      return res.status(400).json({
+        error: "Submissions must close on or before the open date"
+      });
     }
 
     const updated = await updateCapsule(req.params.id, req.user.id, updates);
