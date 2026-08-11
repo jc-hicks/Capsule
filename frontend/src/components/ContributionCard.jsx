@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 
-import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
@@ -29,9 +28,9 @@ export default function ContributionCard({
     <Card className="contribution-card">
       <Card.Body>
         <div className="contribution-card-header">
-          <Badge bg="secondary" className="contribution-type-badge">
+          <span className="contribution-type-badge">
             {contributionTypeLabels[contribution.type]}
-          </Badge>
+          </span>
           <span className="contribution-meta">
             <span
               className="contribution-author"
@@ -74,13 +73,15 @@ export default function ContributionCard({
         {!sealed && isPrediction && (
           <div className="prediction-outcome">
             {outcome === true ? (
-              <Badge bg="success">Came true</Badge>
+              <span className="outcome-pill outcome-true">Came true</span>
             ) : outcome === false ? (
-              <Badge bg="danger">Didn&apos;t happen</Badge>
+              <span className="outcome-pill outcome-false">
+                Didn&apos;t happen
+              </span>
             ) : (
-              <Badge bg="light" text="dark">
+              <span className="outcome-pill outcome-unresolved">
                 Not yet resolved
-              </Badge>
+              </span>
             )}
 
             {canResolve && (

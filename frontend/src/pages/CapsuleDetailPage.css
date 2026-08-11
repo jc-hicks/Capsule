@@ -1,3 +1,5 @@
+@import "../styles/palette.css";
+
 .capsule-detail-page {
   padding: 2rem 0 3rem;
 }
@@ -17,20 +19,17 @@
   align-items: center;
   gap: 0.75rem;
   padding: 2rem;
-  color: #22223b;
+  color: var(--space-indigo);
 }
 
 .capsule-hero-card,
 .capsule-contribution-card,
 .capsule-reveal-card {
-  border: 1px solid #ece5d6;
+  background: var(--parchment);
+  border: 1px solid var(--parchment);
+  border-top: 3px solid var(--space-indigo);
   border-radius: 0.75rem;
-  box-shadow: 0 6px 18px rgba(20, 28, 40, 0.06);
-}
-
-.capsule-hero-card {
-  background: linear-gradient(135deg, #fffaf3 0%, #f3f7ff 100%);
-  border-top: 3px solid #b0592f;
+  box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
 }
 
 .capsule-hero-top {
@@ -40,15 +39,42 @@
   flex-wrap: wrap;
 }
 
+.capsule-status-pill {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--dusty-grape);
+  background: var(--parchment);
+  color: var(--space-indigo);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.capsule-status-collecting {
+  border-style: dashed;
+}
+
+.capsule-status-sealed {
+  border-color: var(--lilac-ash);
+  background: rgba(34, 34, 59, 0.06);
+  color: var(--dusty-grape);
+}
+
+.capsule-status-open {
+  background: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
+}
+
 .capsule-hero-top h1 {
   margin: 0.65rem 0 0.35rem;
   font-weight: 700;
-  color: #162033;
+  color: var(--space-indigo);
 }
 
 .capsule-hero-description {
   margin-bottom: 0;
-  color: #556;
+  color: var(--dusty-grape);
   max-width: 44rem;
 }
 
@@ -65,36 +91,40 @@
 
 .capsule-hero-date span,
 .capsule-hero-date small {
-  color: #667085;
+  color: var(--dusty-grape);
+}
+
+.capsule-hero-date strong {
+  color: var(--space-indigo);
 }
 
 .capsule-hero-date .capsule-hero-deadline {
   margin-top: 0.35rem;
   padding-top: 0.35rem;
-  border-top: 1px solid rgba(102, 112, 133, 0.25);
+  border-top: 1px solid rgba(74, 78, 105, 0.25);
   font-weight: 600;
-  color: #4a4e69;
+  color: var(--dusty-grape);
 }
 
 .capsule-hero-note {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
-  background: rgba(11, 95, 255, 0.08);
-  color: #243b63;
+  background: rgba(34, 34, 59, 0.06);
+  color: var(--dusty-grape);
 }
 
 .capsule-invite {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
-  border: 1px dashed #b0592f;
-  background: rgba(176, 89, 47, 0.08);
+  border: 1px dashed var(--lilac-ash);
+  background: rgba(34, 34, 59, 0.04);
 }
 
 .capsule-invite-label {
   font-weight: 600;
-  color: #7a3d1f;
+  color: var(--space-indigo);
   margin-bottom: 0.5rem;
 }
 
@@ -106,7 +136,7 @@
 }
 
 .invite-modal-hint {
-  color: #556;
+  color: var(--dusty-grape);
 }
 
 .invite-modal-message {
@@ -114,8 +144,8 @@
   font-size: 0.92rem;
   padding: 0.75rem 0.9rem;
   border-radius: 0.6rem;
-  background: #f7f3ea;
-  border: 1px solid #ece5d6;
+  background: var(--parchment);
+  border: 1px solid var(--almond-silk);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -127,7 +157,7 @@
   justify-content: space-between;
   gap: 0.65rem;
   padding: 0.6rem 0;
-  border-top: 1px solid #ece5d6;
+  border-top: 1px solid var(--almond-silk);
 }
 
 .invite-modal-field code {
@@ -138,7 +168,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #8a8272;
+  color: var(--lilac-ash);
   margin-bottom: 0.15rem;
 }
 
@@ -147,7 +177,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #b0592f;
+  color: var(--space-indigo);
   background: rgba(255, 255, 255, 0.75);
   padding: 0.3rem 0.6rem;
   border-radius: 0.5rem;
@@ -156,7 +186,7 @@
 .capsule-invite-validity {
   margin: 0.6rem 0 0;
   font-size: 0.85rem;
-  color: #7a3d1f;
+  color: var(--dusty-grape);
 }
 
 .capsule-detail-grid {
@@ -168,9 +198,9 @@
   font-size: 1.15rem;
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
-  border-bottom: 2px solid #b0592f;
+  border-bottom: 2px solid var(--space-indigo);
   display: inline-block;
-  color: #162033;
+  color: var(--space-indigo);
 }
 
 .capsule-reveal-header {
@@ -194,10 +224,10 @@
   text-align: center;
   gap: 0.75rem;
   padding: 1.5rem 1rem;
-  color: #556;
-  border: 1px dashed #d8ccb6;
+  color: var(--dusty-grape);
+  border: 1px dashed var(--almond-silk);
   border-radius: 8px;
-  background: #fbf7ef;
+  background: rgba(34, 34, 59, 0.03);
 }
 
 .capsule-locked-countdown {
@@ -206,7 +236,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #b0592f;
+  color: var(--space-indigo);
 }
 
 .contribution-list {
@@ -251,7 +281,7 @@
 .reveal-intro-lead,
 .reveal-complete-lead {
   font-size: 1.05rem;
-  color: #243044;
+  color: var(--space-indigo);
   margin-bottom: 1rem;
 }
 
@@ -266,7 +296,7 @@
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.82rem;
-  color: #6f6553;
+  color: var(--dusty-grape);
   margin-bottom: 0.85rem;
 }
 
@@ -292,4 +322,54 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.capsule-detail-page .btn-primary {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
+}
+
+.capsule-detail-page .btn-primary:hover,
+.capsule-detail-page .btn-primary:focus,
+.capsule-detail-page .btn-primary:active {
+  background-color: var(--dusty-grape);
+  border-color: var(--dusty-grape);
+  color: var(--parchment);
+}
+
+.capsule-detail-page .btn-primary:disabled {
+  background-color: var(--lilac-ash);
+  border-color: var(--lilac-ash);
+  color: var(--parchment);
+}
+
+.capsule-detail-page .btn-outline-primary,
+.capsule-detail-page .btn-outline-secondary {
+  border-color: var(--dusty-grape);
+  color: var(--space-indigo);
+}
+
+.capsule-detail-page .btn-outline-primary:hover,
+.capsule-detail-page .btn-outline-primary:focus,
+.capsule-detail-page .btn-outline-secondary:hover,
+.capsule-detail-page .btn-outline-secondary:focus {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
+}
+
+.capsule-detail-page .alert-info {
+  background-color: rgba(34, 34, 59, 0.06);
+  border-color: var(--almond-silk);
+  color: var(--dusty-grape);
+}
+
+.capsule-detail-page a {
+  color: var(--space-indigo);
+}
+
+.capsule-detail-breadcrumb a,
+.capsule-detail-page .btn-link {
+  color: var(--dusty-grape);
 }

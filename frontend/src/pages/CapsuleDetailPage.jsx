@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Alert from "react-bootstrap/Alert";
-import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -521,24 +520,21 @@ export default function CapsuleDetailPage() {
                     <>
                       <div className="capsule-hero-top">
                         <div>
-                          <Badge
-                            bg={
+                          <span
+                            className={`capsule-status-pill capsule-status-${
                               !locked
-                                ? "success"
+                                ? "open"
                                 : submissionsClosed
-                                  ? "secondary"
-                                  : "warning"
-                            }
-                            text={
-                              submissionsClosed && locked ? undefined : "dark"
-                            }
+                                  ? "sealed"
+                                  : "collecting"
+                            }`}
                           >
                             {!locked
                               ? "Open"
                               : submissionsClosed
                                 ? "Sealed"
                                 : "Collecting"}
-                          </Badge>
+                          </span>
                           <h1>{capsule.name}</h1>
                           <p className="capsule-hero-description">
                             {capsule.description}
@@ -775,9 +771,13 @@ export default function CapsuleDetailPage() {
                       <div className="capsule-reveal-header">
                         <h2>Reveal</h2>
                         {revealState?.isOpen ? (
-                          <Badge bg="success">Ready to open</Badge>
+                          <span className="capsule-status-pill capsule-status-open">
+                            Ready to open
+                          </span>
                         ) : (
-                          <Badge bg="secondary">Still sealed</Badge>
+                          <span className="capsule-status-pill capsule-status-sealed">
+                            Still sealed
+                          </span>
                         )}
                       </div>
 
