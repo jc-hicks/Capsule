@@ -11,16 +11,23 @@ export default function CapsuleForm({ onSubmit }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [openDate, setOpenDate] = useState("");
+  const [submissionDeadline, setSubmissionDeadline] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const succeeded = await onSubmit({ name, description, openDate });
+    const succeeded = await onSubmit({
+      name,
+      description,
+      openDate,
+      submissionDeadline
+    });
     // Keep the entered values on screen if the create failed so the user can
     // fix and resubmit instead of losing their input.
     if (succeeded) {
       setName("");
       setDescription("");
       setOpenDate("");
+      setSubmissionDeadline("");
     }
   };
 
@@ -53,6 +60,20 @@ export default function CapsuleForm({ onSubmit }) {
           onChange={(e) => setOpenDate(e.target.value)}
           required
         />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="submissionDeadline">
+        <Form.Label>Submissions close</Form.Label>
+        <Form.Control
+          type="date"
+          value={submissionDeadline}
+          max={openDate || undefined}
+          onChange={(e) => setSubmissionDeadline(e.target.value)}
+          required
+        />
+        <Form.Text>
+          After this date the capsule is sealed — no new entries or edits — and
+          the contents stay hidden until the open date.
+        </Form.Text>
       </Form.Group>
       <Button type="submit">Submit</Button>
     </Form>

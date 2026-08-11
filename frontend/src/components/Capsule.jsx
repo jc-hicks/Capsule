@@ -27,15 +27,9 @@ export default function Capsule({ capsule }) {
     <Card className="capsule-card">
       <Card.Body>
         <Card.Title>{capsule.name}</Card.Title>
-        {isLocked ? (
-          <Card.Text className="capsule-description capsule-sealed">
-            Sealed until the open date.
-          </Card.Text>
-        ) : (
-          <Card.Text className="capsule-description">
-            {capsule.description}
-          </Card.Text>
-        )}
+        <Card.Text className="capsule-description">
+          {capsule.description}
+        </Card.Text>
         {capsule.shareCode && (
           <Card.Text className="capsule-share-code">
             Share code: <span>{capsule.shareCode}</span>
@@ -82,6 +76,7 @@ Capsule.propTypes = {
     description: PropTypes.string,
     memberNames: PropTypes.arrayOf(PropTypes.string),
     openDate: PropTypes.string,
+    submissionDeadline: PropTypes.string,
     locked: PropTypes.bool,
     shareCode: PropTypes.string
   }).isRequired

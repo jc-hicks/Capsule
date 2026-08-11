@@ -73,6 +73,7 @@ export default function CapsuleDetailPage() {
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editOpenDate, setEditOpenDate] = useState("");
+  const [editSubmissionDeadline, setEditSubmissionDeadline] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [revealMode, setRevealMode] = useState("intro");
@@ -130,27 +131,37 @@ export default function CapsuleDetailPage() {
   }, [id, navigate]);
 
   useEffect(() => {
-    if (!revealState?.isOpen && revealState?.opensAt) {
-      const openAt = new Date(revealState.opensAt).getTime();
-      const runRefresh = async () => {
-        try {
-          const data = await loadCapsuleData(id, navigate);
-          if (data) {
-            applyData(data);
-          }
-        } catch (refreshError) {
-          setError(refreshError.message);
-        }
-      };
+    if (!revealState) return undefined;
 
-      const delay = now >= openAt ? 0 : Math.max(openAt - now, 1000);
-      const timeout = window.setTimeout(() => {
-        void runRefresh();
-      }, delay);
-
-      return () => window.clearTimeout(timeout);
+    // Refresh at whichever boundary comes next: submissions closing, then the
+    // reveal. Both flip server-derived state the page renders from.
+    const boundaries = [];
+    if (!revealState.submissionsClosed && revealState.submissionsCloseAt) {
+      boundaries.push(new Date(revealState.submissionsCloseAt).getTime());
     }
-    return undefined;
+    if (!revealState.isOpen && revealState.opensAt) {
+      boundaries.push(new Date(revealState.opensAt).getTime());
+    }
+    if (boundaries.length === 0) return undefined;
+
+    const nextBoundary = Math.min(...boundaries);
+    const runRefresh = async () => {
+      try {
+        const data = await loadCapsuleData(id, navigate);
+        if (data) {
+          applyData(data);
+        }
+      } catch (refreshError) {
+        setError(refreshError.message);
+      }
+    };
+
+    const delay = now >= nextBoundary ? 0 : Math.max(nextBoundary - now, 1000);
+    const timeout = window.setTimeout(() => {
+      void runRefresh();
+    }, delay);
+
+    return () => window.clearTimeout(timeout);
   }, [id, navigate, now, revealState]);
 
   const countdownLabel = useMemo(() => {
@@ -160,6 +171,29 @@ export default function CapsuleDetailPage() {
   }, [now, revealState]);
 
   const locked = !revealState?.isOpen;
+  const submissionsClosed = revealState?.submissionsClosed ?? !locked;
+  const canContribute = !submissionsClosed;
+
+  const submissionDeadlineLabel = useMemo(() => {
+    const deadline = revealState?.submissionsCloseAt;
+    if (!deadline) return null;
+    return new Date(deadline).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC"
+    });
+  }, [revealState]);
+
+  const submissionCountdownLabel = useMemo(() => {
+    if (!revealState?.submissionsCloseAt) return null;
+    const closeAt = new Date(revealState.submissionsCloseAt).getTime();
+    return formatCountdown(closeAt - now);
+  }, [now, revealState]);
+
+  if (isEditing && submissionsClosed) {
+    setIsEditing(false);
+  }
 
   const reloadCapsule = async () => {
     const data = await loadCapsuleData(id, navigate);
@@ -309,6 +343,11 @@ export default function CapsuleDetailPage() {
         ? new Date(capsule.openDate).toISOString().slice(0, 10)
         : ""
     );
+    setEditSubmissionDeadline(
+      capsule.submissionDeadline
+        ? new Date(capsule.submissionDeadline).toISOString().slice(0, 10)
+        : ""
+    );
     setError(null);
     setIsEditing(true);
   };
@@ -319,15 +358,12 @@ export default function CapsuleDetailPage() {
     setError(null);
 
     try {
-      // A sealed capsule never sends its description to the client, so there is
-      // nothing to edit and omitting it leaves the stored value untouched.
       const updates = {
         name: editName,
-        openDate: editOpenDate
+        description: editDescription,
+        openDate: editOpenDate,
+        submissionDeadline: editSubmissionDeadline
       };
-      if (!locked) {
-        updates.description = editDescription;
-      }
 
       const response = await fetch(`/api/capsules/${id}`, {
         method: "PUT",
@@ -431,25 +467,18 @@ export default function CapsuleDetailPage() {
                           disabled={savingEdit}
                         />
                       </Form.Group>
-                      {locked ? (
-                        <p className="capsule-edit-sealed-note">
-                          The description stays sealed until the open date and
-                          cannot be edited from here. Its current value is kept.
-                        </p>
-                      ) : (
-                        <Form.Group className="mb-3">
-                          <Form.Label>Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={3}
-                            value={editDescription}
-                            onChange={(event) =>
-                              setEditDescription(event.target.value)
-                            }
-                            disabled={savingEdit}
-                          />
-                        </Form.Group>
-                      )}
+                      <Form.Group className="mb-3">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          value={editDescription}
+                          onChange={(event) =>
+                            setEditDescription(event.target.value)
+                          }
+                          disabled={savingEdit}
+                        />
+                      </Form.Group>
                       <Form.Group className="mb-3">
                         <Form.Label>Open date</Form.Label>
                         <Form.Control
@@ -460,6 +489,21 @@ export default function CapsuleDetailPage() {
                           }
                           disabled={savingEdit}
                         />
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Submissions close</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={editSubmissionDeadline}
+                          max={editOpenDate || undefined}
+                          onChange={(event) =>
+                            setEditSubmissionDeadline(event.target.value)
+                          }
+                          disabled={savingEdit}
+                        />
+                        <Form.Text>
+                          After this date no new entries or edits are accepted.
+                        </Form.Text>
                       </Form.Group>
                       <div className="capsule-edit-actions">
                         <Button type="submit" disabled={savingEdit}>
@@ -480,10 +524,22 @@ export default function CapsuleDetailPage() {
                       <div className="capsule-hero-top">
                         <div>
                           <Badge
-                            bg={locked ? "warning" : "success"}
-                            text="dark"
+                            bg={
+                              !locked
+                                ? "success"
+                                : submissionsClosed
+                                  ? "secondary"
+                                  : "warning"
+                            }
+                            text={
+                              submissionsClosed && locked ? undefined : "dark"
+                            }
                           >
-                            {locked ? "Locked" : "Open"}
+                            {!locked
+                              ? "Open"
+                              : submissionsClosed
+                                ? "Sealed"
+                                : "Collecting"}
                           </Badge>
                           <h1>{capsule.name}</h1>
                           <p className="capsule-hero-description">
@@ -504,13 +560,20 @@ export default function CapsuleDetailPage() {
                             )}
                           </strong>
                           {locked && <small>{countdownLabel} remaining</small>}
+                          {canContribute && submissionCountdownLabel && (
+                            <small className="capsule-hero-deadline">
+                              Submissions close in {submissionCountdownLabel}
+                            </small>
+                          )}
                         </div>
                       </div>
 
                       <div className="capsule-hero-note">
-                        {locked
-                          ? "Contributions are collected now, but the contents stay sealed until the open date."
-                          : "The capsule is open. Contributions and reveal content are visible below."}
+                        {!locked
+                          ? "The capsule is open. Contributions and reveal content are visible below."
+                          : submissionsClosed
+                            ? "Submissions have closed. Everything inside is sealed until the open date."
+                            : `Contributions are open until ${submissionDeadlineLabel}, then sealed until the open date.`}
                       </div>
 
                       {isOwner && capsule.shareCode && (
@@ -540,13 +603,15 @@ export default function CapsuleDetailPage() {
 
                       {isOwner && (
                         <div className="capsule-owner-actions">
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={startEditing}
-                          >
-                            Edit
-                          </Button>
+                          {canContribute && (
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={startEditing}
+                            >
+                              Edit
+                            </Button>
+                          )}
                           <Button
                             variant="outline-danger"
                             size="sm"
@@ -578,7 +643,7 @@ export default function CapsuleDetailPage() {
                             value={type}
                             onChange={(event) => setType(event.target.value)}
                             disabled={
-                              !locked || submitting || Boolean(editingId)
+                              !canContribute || submitting || Boolean(editingId)
                             }
                           >
                             <option value="message">Message</option>
@@ -598,7 +663,7 @@ export default function CapsuleDetailPage() {
                                 onChange={(event) =>
                                   setPhotoFile(event.target.files?.[0] || null)
                                 }
-                                disabled={!locked || submitting}
+                                disabled={!canContribute || submitting}
                               />
                             </Form.Group>
                             <Form.Text className="text-muted">
@@ -639,22 +704,23 @@ export default function CapsuleDetailPage() {
                                   ? "I think we'll all be living in..."
                                   : "Write a note for the future."
                               }
-                              disabled={!locked || submitting}
+                              disabled={!canContribute || submitting}
                             />
                           </Form.Group>
                         )}
 
-                        {!locked && (
+                        {submissionsClosed && (
                           <Alert variant="info" className="mb-3">
-                            This capsule is open, so contributions can no longer
-                            be added or edited.
+                            {locked
+                              ? "Submissions have closed. This capsule is sealed until the open date."
+                              : "This capsule is open, so contributions can no longer be added or edited."}
                           </Alert>
                         )}
 
                         <div className="capsule-edit-actions">
                           <Button
                             type="submit"
-                            disabled={!locked || submitting}
+                            disabled={!canContribute || submitting}
                           >
                             {submitting
                               ? "Saving…"
@@ -683,8 +749,9 @@ export default function CapsuleDetailPage() {
                         <h2>Your contributions</h2>
                         {locked && (
                           <p className="text-muted">
-                            Your entries stay sealed until the open date. You
-                            can edit or delete them until then.
+                            {canContribute
+                              ? "Your entries stay sealed until the open date. You can edit or delete them until submissions close."
+                              : "Submissions have closed, so these entries are locked in until the open date."}
                           </p>
                         )}
                         <div className="contribution-list">
@@ -693,7 +760,7 @@ export default function CapsuleDetailPage() {
                               key={contribution.id}
                               contribution={contribution}
                               sealed={locked}
-                              showActions={locked}
+                              showActions={canContribute}
                               onEdit={startEditContribution}
                               onDelete={handleDeleteContribution}
                             />
@@ -812,9 +879,9 @@ export default function CapsuleDetailPage() {
                       ) : (
                         <div className="capsule-locked-state">
                           <p>
-                            The contents stay hidden until the open date.
-                            Invitees can still add messages, predictions, and
-                            photos while the capsule is locked.
+                            {canContribute
+                              ? "The contents stay hidden until the open date. Invitees can still add messages, predictions, and photos until submissions close."
+                              : "Submissions have closed and everything inside is sealed until the open date."}
                           </p>
                           <p className="capsule-locked-countdown">
                             Opens in {countdownLabel}

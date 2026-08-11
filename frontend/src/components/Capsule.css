@@ -58,11 +58,6 @@
   color: var(--dusty-grape);
 }
 
-.capsule-sealed {
-  font-style: italic;
-  color: var(--dusty-grape);
-}
-
 .capsule-share-code {
   margin-bottom: 0.25rem;
   font-size: 0.85rem;

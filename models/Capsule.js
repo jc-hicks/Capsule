@@ -23,20 +23,25 @@ const resolveMemberNames = async (members) => {
   return list.map((member) => nameById.get(member) || member);
 };
 
+export const resolveSubmissionDeadline = (doc) =>
+  doc.submissionDeadline || doc.openDate;
+
 const toPlain = async (doc, viewerId) => {
   if (!doc) return null;
   const owner = doc.owner.toString();
   const locked = doc.openDate ? new Date(doc.openDate) > new Date() : false;
+  const submissionDeadline = resolveSubmissionDeadline(doc);
   const plain = {
     ...doc,
     id: doc._id.toString(),
     owner,
     locked,
+    submissionDeadline,
+    submissionsClosed: submissionDeadline
+      ? new Date(submissionDeadline) <= new Date()
+      : false,
     memberNames: await resolveMemberNames(doc.members)
   };
-  if (locked) {
-    delete plain.description;
-  }
   if (!viewerId || viewerId !== owner) {
     delete plain.shareCode;
   }
@@ -48,6 +53,7 @@ export const createCapsule = async (capsule, ownerId) => {
     name: capsule.name,
     description: capsule.description,
     openDate: capsule.openDate,
+    submissionDeadline: capsule.submissionDeadline,
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
     shareCode: generateShareCode(ownerId),
@@ -96,7 +102,7 @@ export const addMemberToCapsule = async (id, userId) => {
 export const updateCapsule = async (id, ownerId, updates) => {
   if (!ObjectId.isValid(id)) return null;
 
-  const allowed = ["name", "description", "openDate"];
+  const allowed = ["name", "description", "openDate", "submissionDeadline"];
   const changes = {};
   for (const field of allowed) {
     if (updates[field] !== undefined) {

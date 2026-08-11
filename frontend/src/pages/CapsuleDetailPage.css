@@ -68,6 +68,14 @@
   color: #667085;
 }
 
+.capsule-hero-date .capsule-hero-deadline {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(102, 112, 133, 0.25);
+  font-weight: 600;
+  color: #4a4e69;
+}
+
 .capsule-hero-note {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
@@ -232,15 +240,6 @@
 .capsule-edit-actions {
   display: flex;
   gap: 0.65rem;
-}
-
-.capsule-edit-sealed-note {
-  margin-bottom: 1rem;
-  padding: 0.6rem 0.75rem;
-  border-left: 3px solid #dee2e6;
-  background: #f8f9fa;
-  color: #5c636a;
-  font-size: 0.875rem;
 }
 
 .reveal-intro,
