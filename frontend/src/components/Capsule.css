@@ -12,6 +12,42 @@
     box-shadow 0.15s ease;
 }
 
+.capsule-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.capsule-card-header .card-title {
+  margin-bottom: 0.5rem;
+}
+
+.capsule-role-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.capsule-role-owner {
+  background: var(--space-indigo);
+  color: var(--parchment);
+}
+
+.capsule-role-member {
+  background: var(--parchment);
+  border: 1px solid var(--dusty-grape);
+  color: var(--dusty-grape);
+}
+
 .capsule-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 24px rgba(34, 34, 59, 0.16);
@@ -56,15 +92,32 @@
 }
 
 .capsule-share-code {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
   margin-bottom: 0.25rem;
   font-size: 0.85rem;
   color: var(--dusty-grape);
+  white-space: nowrap;
 }
 
 .capsule-share-code span {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 600;
   letter-spacing: 0.05em;
+  color: var(--space-indigo);
+}
+
+.capsule-share-code-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border-color: var(--dusty-grape);
   color: var(--space-indigo);
 }
 

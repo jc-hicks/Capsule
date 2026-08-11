@@ -223,6 +223,12 @@
   margin-bottom: 0.85rem;
 }
 
+.contribution-type-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .capsule-owner-actions {
   display: flex;
   gap: 0.65rem;

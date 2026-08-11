@@ -15,6 +15,15 @@ import ContributionCard from "../components/ContributionCard.jsx";
 import VoiceRecorder from "../components/VoiceRecorder.jsx";
 import "./CapsuleDetailPage.css";
 
+// Photo listed first: usability sessions found it's the most common
+// contribution, and it was getting buried inside a type dropdown.
+const contributionTypeOptions = [
+  { value: "photo", label: "Photo" },
+  { value: "message", label: "Message" },
+  { value: "prediction", label: "Prediction" },
+  { value: "voice", label: "Voice note" }
+];
+
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -63,7 +72,7 @@ export default function CapsuleDetailPage() {
   const [myContributions, setMyContributions] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
   const [now, setNow] = useState(0);
-  const [type, setType] = useState("message");
+  const [type, setType] = useState("photo");
   const [content, setContent] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -170,7 +179,7 @@ export default function CapsuleDetailPage() {
 
   const resetContributionForm = () => {
     setEditingId(null);
-    setType("message");
+    setType("photo");
     setContent("");
     setPhotoFile(null);
     setAudioBlob(null);
@@ -574,18 +583,29 @@ export default function CapsuleDetailPage() {
                       <Form onSubmit={handleContributionSubmit}>
                         <Form.Group className="mb-3">
                           <Form.Label>Contribution type</Form.Label>
-                          <Form.Select
-                            value={type}
-                            onChange={(event) => setType(event.target.value)}
-                            disabled={
-                              !locked || submitting || Boolean(editingId)
-                            }
+                          <div
+                            className="contribution-type-picker"
+                            role="group"
+                            aria-label="Contribution type"
                           >
-                            <option value="message">Message</option>
-                            <option value="prediction">Prediction</option>
-                            <option value="photo">Photo</option>
-                            <option value="voice">Voice note</option>
-                          </Form.Select>
+                            {contributionTypeOptions.map((option) => (
+                              <Button
+                                key={option.value}
+                                type="button"
+                                variant={
+                                  type === option.value
+                                    ? "primary"
+                                    : "outline-secondary"
+                                }
+                                onClick={() => setType(option.value)}
+                                disabled={
+                                  !locked || submitting || Boolean(editingId)
+                                }
+                              >
+                                {option.label}
+                              </Button>
+                            ))}
+                          </div>
                         </Form.Group>
 
                         {type === "photo" ? (

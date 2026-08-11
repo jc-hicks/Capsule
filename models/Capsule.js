@@ -20,7 +20,11 @@ const resolveMemberNames = async (members) => {
     }
   }
 
-  return list.map((member) => nameById.get(member) || member);
+  // Drop any member whose account no longer exists rather than falling
+  // back to displaying its raw id.
+  return list
+    .map((member) => nameById.get(member))
+    .filter((name) => Boolean(name));
 };
 
 const toPlain = async (doc, viewerId) => {
