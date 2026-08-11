@@ -38,8 +38,11 @@ export default function Countdown({ openDate, onComplete }) {
 
   return (
     <p className="countdown">
-      Opens in {days > 0 && `${days}d `}
-      {pad(hours)}:{pad(minutes)}:{pad(seconds)}
+      <span className="countdown-label">Countdown</span>
+      <span className="countdown-value">
+        {days > 0 && `${days}d `}
+        {pad(hours)}:{pad(minutes)}:{pad(seconds)}
+      </span>
     </p>
   );
 }

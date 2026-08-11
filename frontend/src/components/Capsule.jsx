@@ -36,9 +36,6 @@ export default function Capsule({ capsule }) {
             {capsule.description}
           </Card.Text>
         )}
-        {isLocked && capsule.openDate && (
-          <Countdown openDate={capsule.openDate} />
-        )}
         {capsule.shareCode && (
           <Card.Text className="capsule-share-code">
             Share code: <span>{capsule.shareCode}</span>
@@ -53,10 +50,17 @@ export default function Capsule({ capsule }) {
             ))}
           </div>
         )}
-        {openLabel && (
-          <p className="capsule-open-date">
-            {isLocked ? "Opens" : "Opened"} {openLabel}
-          </p>
+        {(openLabel || (isLocked && capsule.openDate)) && (
+          <div className="capsule-schedule">
+            {openLabel && (
+              <p className="capsule-open-date">
+                {isLocked ? "Opens" : "Opened"} {openLabel}
+              </p>
+            )}
+            {isLocked && capsule.openDate && (
+              <Countdown openDate={capsule.openDate} />
+            )}
+          </div>
         )}
         <Button
           as={Link}
