@@ -33,8 +33,15 @@ export default function ContributionCard({
             {contributionTypeLabels[contribution.type]}
           </Badge>
           <span className="contribution-meta">
-            {contribution.authorName} ·{" "}
-            {new Date(contribution.createdAt).toLocaleString()}
+            <span
+              className="contribution-author"
+              title={contribution.authorName}
+            >
+              {contribution.authorName}
+            </span>
+            <span className="contribution-timestamp">
+              {new Date(contribution.createdAt).toLocaleString()}
+            </span>
           </span>
         </div>
 
