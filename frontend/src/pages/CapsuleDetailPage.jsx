@@ -11,6 +11,7 @@ import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 
 import ContributionCard from "../components/ContributionCard.jsx";
+import RevealCollage from "../components/RevealCollage.jsx";
 import VoiceRecorder from "../components/VoiceRecorder.jsx";
 import "./CapsuleDetailPage.css";
 
@@ -87,6 +88,10 @@ export default function CapsuleDetailPage() {
   const [revealMode, setRevealMode] = useState("intro");
   const [ceremonyIndex, setCeremonyIndex] = useState(0);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  // null = no manual choice yet, so visibility follows whether the capsule
+  // is still locked. Once the user clicks Show/Hide, that choice sticks.
+  const [contributionPanelOverride, setContributionPanelOverride] =
+    useState(null);
   const [copiedField, setCopiedField] = useState(null);
 
   const applyData = (data) => {
@@ -179,6 +184,11 @@ export default function CapsuleDetailPage() {
   const locked = !revealState?.isOpen;
   const submissionsClosed = revealState?.submissionsClosed ?? !locked;
   const canContribute = !submissionsClosed;
+
+  // Once a capsule opens, the add/edit contribution panel has nothing left
+  // to do — default it to collapsed so the reveal gets the room, but respect
+  // a manual Show/Hide click over that default from then on.
+  const showContributionPanel = contributionPanelOverride ?? locked;
 
   const submissionDeadlineLabel = useMemo(() => {
     const deadline = revealState?.submissionsCloseAt;
@@ -550,7 +560,7 @@ export default function CapsuleDetailPage() {
                           </p>
                         </div>
                         <div className="capsule-hero-date">
-                          <span>Opens on</span>
+                          <span>{locked ? "Opens on" : "Opened on"}</span>
                           <strong>
                             {new Date(capsule.openDate).toLocaleDateString(
                               undefined,
@@ -631,176 +641,202 @@ export default function CapsuleDetailPage() {
               </Card>
 
               <Row className="g-4 capsule-detail-grid">
-                <Col xl={5}>
-                  <Card className="capsule-contribution-card">
-                    <Card.Body>
-                      <h2>
-                        {editingId
-                          ? "Edit your contribution"
-                          : "Add a contribution"}
-                      </h2>
-                      <Form onSubmit={handleContributionSubmit}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Contribution type</Form.Label>
-                          <div
-                            className="contribution-type-picker"
-                            role="group"
-                            aria-label="Contribution type"
-                          >
-                            {contributionTypeOptions.map((option) => (
-                              <Button
-                                key={option.value}
-                                type="button"
-                                variant={
-                                  type === option.value
-                                    ? "primary"
-                                    : "outline-secondary"
-                                }
-                                onClick={() => setType(option.value)}
-                                disabled={
-                                  !canContribute ||
-                                  submitting ||
-                                  Boolean(editingId)
-                                }
-                              >
-                                {option.label}
-                              </Button>
-                            ))}
-                          </div>
-                        </Form.Group>
-
-                        {type === "photo" ? (
-                          <>
+                <Col xl={showContributionPanel ? 5 : "auto"}>
+                  {!locked && (
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      className="capsule-contribution-panel-toggle"
+                      onClick={() =>
+                        setContributionPanelOverride(!showContributionPanel)
+                      }
+                    >
+                      {showContributionPanel
+                        ? "Hide your contributions"
+                        : "Show your contributions"}
+                    </Button>
+                  )}
+                  {showContributionPanel && (
+                    <>
+                      <Card className="capsule-contribution-card">
+                        <Card.Body>
+                          <h2>
+                            {editingId
+                              ? "Edit your contribution"
+                              : "Add a contribution"}
+                          </h2>
+                          <Form onSubmit={handleContributionSubmit}>
                             <Form.Group className="mb-3">
-                              <Form.Label>Upload a photo</Form.Label>
-                              <Form.Control
-                                type="file"
-                                accept="image/*"
-                                onChange={(event) =>
-                                  setPhotoFile(event.target.files?.[0] || null)
-                                }
-                                disabled={!canContribute || submitting}
-                              />
+                              <Form.Label>Contribution type</Form.Label>
+                              <div
+                                className="contribution-type-picker"
+                                role="group"
+                                aria-label="Contribution type"
+                              >
+                                {contributionTypeOptions.map((option) => (
+                                  <Button
+                                    key={option.value}
+                                    type="button"
+                                    variant={
+                                      type === option.value
+                                        ? "primary"
+                                        : "outline-secondary"
+                                    }
+                                    onClick={() => setType(option.value)}
+                                    disabled={
+                                      !canContribute ||
+                                      submitting ||
+                                      Boolean(editingId)
+                                    }
+                                  >
+                                    {option.label}
+                                  </Button>
+                                ))}
+                              </div>
                             </Form.Group>
-                            <Form.Text className="text-muted">
-                              {editingId
-                                ? "Leave this empty to keep the current photo, or choose a new one to replace it."
-                                : "The image is stored with the capsule so it can be revealed later."}
-                            </Form.Text>
-                          </>
-                        ) : type === "voice" ? (
-                          <Form.Group className="mb-3">
-                            <Form.Label>Record a voice note</Form.Label>
-                            <VoiceRecorder
-                              key={recorderKey}
-                              onRecorded={setAudioBlob}
-                              existingLabel={
-                                editingId
-                                  ? "Record again to replace your saved note."
-                                  : ""
-                              }
-                            />
-                          </Form.Group>
-                        ) : (
-                          <Form.Group className="mb-3">
-                            <Form.Label>
-                              {type === "prediction"
-                                ? "Your prediction"
-                                : "Your message"}
-                            </Form.Label>
-                            <Form.Control
-                              as="textarea"
-                              rows={5}
-                              value={content}
-                              onChange={(event) =>
-                                setContent(event.target.value)
-                              }
-                              placeholder={
-                                type === "prediction"
-                                  ? "I think we'll all be living in..."
-                                  : "Write a note for the future."
-                              }
-                              disabled={!canContribute || submitting}
-                            />
-                          </Form.Group>
-                        )}
 
-                        {submissionsClosed && (
-                          <Alert variant="info" className="mb-3">
-                            {locked
-                              ? "Submissions have closed. This capsule is sealed until the open date."
-                              : "This capsule is open, so contributions can no longer be added or edited."}
-                          </Alert>
-                        )}
+                            {type === "photo" ? (
+                              <>
+                                <Form.Group className="mb-3">
+                                  <Form.Label>Upload a photo</Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(event) =>
+                                      setPhotoFile(
+                                        event.target.files?.[0] || null
+                                      )
+                                    }
+                                    disabled={!canContribute || submitting}
+                                  />
+                                </Form.Group>
+                                <Form.Text className="text-muted">
+                                  {editingId
+                                    ? "Leave this empty to keep the current photo, or choose a new one to replace it."
+                                    : "The image is stored with the capsule so it can be revealed later."}
+                                </Form.Text>
+                              </>
+                            ) : type === "voice" ? (
+                              <Form.Group className="mb-3">
+                                <Form.Label>Record a voice note</Form.Label>
+                                <VoiceRecorder
+                                  key={recorderKey}
+                                  onRecorded={setAudioBlob}
+                                  existingLabel={
+                                    editingId
+                                      ? "Record again to replace your saved note."
+                                      : ""
+                                  }
+                                />
+                              </Form.Group>
+                            ) : (
+                              <Form.Group className="mb-3">
+                                <Form.Label>
+                                  {type === "prediction"
+                                    ? "Your prediction"
+                                    : "Your message"}
+                                </Form.Label>
+                                <Form.Control
+                                  as="textarea"
+                                  rows={5}
+                                  value={content}
+                                  onChange={(event) =>
+                                    setContent(event.target.value)
+                                  }
+                                  placeholder={
+                                    type === "prediction"
+                                      ? "I think we'll all be living in..."
+                                      : "Write a note for the future."
+                                  }
+                                  disabled={!canContribute || submitting}
+                                />
+                              </Form.Group>
+                            )}
 
-                        <div className="capsule-edit-actions">
-                          <Button
-                            type="submit"
-                            disabled={!canContribute || submitting}
-                          >
-                            {submitting
-                              ? "Saving…"
-                              : editingId
-                                ? "Update contribution"
-                                : "Save contribution"}
-                          </Button>
-                          {editingId && (
-                            <Button
-                              type="button"
-                              variant="outline-secondary"
-                              onClick={resetContributionForm}
-                              disabled={submitting}
-                            >
-                              Cancel
-                            </Button>
-                          )}
-                        </div>
-                      </Form>
-                    </Card.Body>
-                  </Card>
+                            {submissionsClosed && (
+                              <Alert variant="info" className="mb-3">
+                                {locked
+                                  ? "Submissions have closed. This capsule is sealed until the open date."
+                                  : "This capsule is open, so contributions can no longer be added or edited."}
+                              </Alert>
+                            )}
 
-                  {myContributions.length > 0 && (
-                    <Card className="capsule-contribution-card capsule-your-contributions">
-                      <Card.Body>
-                        <h2>Your contributions</h2>
-                        {locked && (
-                          <p className="text-muted">
-                            {canContribute
-                              ? "Your entries stay sealed until the open date. You can edit or delete them until submissions close."
-                              : "Submissions have closed, so these entries are locked in until the open date."}
-                          </p>
-                        )}
-                        <div className="contribution-list">
-                          {myContributions.map((contribution) => (
-                            <ContributionCard
-                              key={contribution.id}
-                              contribution={contribution}
-                              sealed={locked}
-                              showActions={canContribute}
-                              onEdit={startEditContribution}
-                              onDelete={handleDeleteContribution}
-                            />
-                          ))}
-                        </div>
-                      </Card.Body>
-                    </Card>
+                            <div className="capsule-edit-actions">
+                              <Button
+                                type="submit"
+                                disabled={!canContribute || submitting}
+                              >
+                                {submitting
+                                  ? "Saving…"
+                                  : editingId
+                                    ? "Update contribution"
+                                    : "Save contribution"}
+                              </Button>
+                              {editingId && (
+                                <Button
+                                  type="button"
+                                  variant="outline-secondary"
+                                  onClick={resetContributionForm}
+                                  disabled={submitting}
+                                >
+                                  Cancel
+                                </Button>
+                              )}
+                            </div>
+                          </Form>
+                        </Card.Body>
+                      </Card>
+
+                      {myContributions.length > 0 && (
+                        <Card className="capsule-contribution-card capsule-your-contributions">
+                          <Card.Body>
+                            <h2>Your contributions</h2>
+                            {locked && (
+                              <p className="text-muted">
+                                {canContribute
+                                  ? "Your entries stay sealed until the open date. You can edit or delete them until submissions close."
+                                  : "Submissions have closed, so these entries are locked in until the open date."}
+                              </p>
+                            )}
+                            <div className="contribution-list">
+                              {myContributions.map((contribution) => (
+                                <ContributionCard
+                                  key={contribution.id}
+                                  contribution={contribution}
+                                  sealed={locked}
+                                  showActions={canContribute}
+                                  onEdit={startEditContribution}
+                                  onDelete={handleDeleteContribution}
+                                />
+                              ))}
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      )}
+                    </>
                   )}
                 </Col>
 
-                <Col xl={7}>
+                <Col xl={showContributionPanel ? 7 : true}>
                   <Card className="capsule-reveal-card">
                     <Card.Body>
                       <div className="capsule-reveal-header">
                         <h2>Reveal</h2>
-                        {revealState?.isOpen ? (
-                          <span className="capsule-status-pill capsule-status-open">
-                            Ready to open
-                          </span>
-                        ) : (
-                          <span className="capsule-status-pill capsule-status-sealed">
-                            Still sealed
-                          </span>
-                        )}
+                        <span
+                          className={`capsule-status-pill capsule-status-${
+                            !locked
+                              ? "open"
+                              : submissionsClosed
+                                ? "sealed"
+                                : "collecting"
+                          }`}
+                        >
+                          {!locked
+                            ? "Open"
+                            : submissionsClosed
+                              ? "Sealed"
+                              : "Collecting"}
+                        </span>
                       </div>
 
                       {revealState?.isOpen ? (
@@ -812,7 +848,7 @@ export default function CapsuleDetailPage() {
                                 {contributions.length === 1
                                   ? "memory is"
                                   : "memories are"}{" "}
-                                sealed inside. Open them one at a time?
+                                waiting inside. Open them one at a time?
                               </p>
                               <div className="reveal-intro-actions">
                                 <Button
@@ -827,7 +863,7 @@ export default function CapsuleDetailPage() {
                                   variant="link"
                                   onClick={() => setRevealMode("all")}
                                 >
-                                  See them all at once
+                                  View as a collage
                                 </Button>
                               </div>
                             </div>
@@ -876,20 +912,16 @@ export default function CapsuleDetailPage() {
                                 That&apos;s everything. 🎉
                               </p>
                               <Button onClick={() => setRevealMode("all")}>
-                                View all contributions
+                                View as a collage
                               </Button>
                             </div>
                           ) : (
-                            <div className="contribution-list">
-                              {contributions.map((contribution) => (
-                                <ContributionCard
-                                  key={contribution.id}
-                                  contribution={contribution}
-                                  canResolve={isOwner}
-                                  onSetOutcome={handleSetOutcome}
-                                />
-                              ))}
-                            </div>
+                            <RevealCollage
+                              contributions={contributions}
+                              capsuleId={id}
+                              isOwner={isOwner}
+                              onSetOutcome={handleSetOutcome}
+                            />
                           )
                         ) : (
                           <Alert variant="light" className="mb-0">

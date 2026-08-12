@@ -32,6 +32,15 @@
   box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
 }
 
+.capsule-reveal-card {
+  background: linear-gradient(175deg, var(--parchment) 0%, #ece0d6 100%);
+  border-top: 3px solid var(--dusty-grape);
+  border-radius: 1rem;
+  box-shadow:
+    0 14px 32px rgba(74, 62, 50, 0.16),
+    0 3px 8px rgba(74, 62, 50, 0.08);
+}
+
 .capsule-hero-top {
   display: flex;
   justify-content: space-between;
@@ -61,9 +70,10 @@
 }
 
 .capsule-status-open {
-  background: var(--space-indigo);
-  border-color: var(--space-indigo);
+  background: var(--dusty-grape);
+  border-color: var(--dusty-grape);
   color: var(--parchment);
+  box-shadow: 0 3px 8px rgba(74, 78, 105, 0.35);
 }
 
 .capsule-hero-top h1 {
@@ -213,6 +223,7 @@
 
 .capsule-reveal-header h2 {
   margin-bottom: 0;
+  border-bottom-color: var(--dusty-grape);
 }
 
 .capsule-locked-state {
@@ -246,6 +257,10 @@
 
 .capsule-your-contributions {
   margin-top: 1.25rem;
+}
+
+.capsule-contribution-panel-toggle {
+  margin-bottom: 1rem;
 }
 
 .capsule-editing-banner {

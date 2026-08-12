@@ -18,6 +18,8 @@ import {
   findContributionsByAuthor,
   findContributionsByCapsuleId,
   isContributionType,
+  markContributionRevealed,
+  resetRevealedForViewer,
   setPredictionOutcome,
   updateContribution
 } from "../models/Contribution.js";
@@ -155,7 +157,7 @@ router.get("/capsules/:id", isAuthenticated, async (req, res, next) => {
 
     const revealState = getCapsuleOpenState(capsule);
     const contributions = revealState.isOpen
-      ? await findContributionsByCapsuleId(capsule.id)
+      ? await findContributionsByCapsuleId(capsule.id, req.user.id)
       : [];
     // Authors can always see (and manage) their own contributions, even while
     // the capsule is still sealed, so they can edit or remove them before the
@@ -426,6 +428,75 @@ router.patch(
       );
 
       res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch(
+  "/capsules/:id/contributions/:contributionId/reveal",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (!getCapsuleOpenState(capsule).isOpen) {
+        return res
+          .status(403)
+          .json({ error: "This capsule hasn't opened yet" });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const updated = await markContributionRevealed(
+        req.params.contributionId,
+        req.user.id
+      );
+
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete(
+  "/capsules/:id/reveals",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      await resetRevealedForViewer(capsule.id, req.user.id);
+
+      res.status(204).end();
     } catch (error) {
       next(error);
     }

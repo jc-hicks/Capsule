@@ -9,13 +9,15 @@ const allowedTypes = new Set(["message", "prediction", "photo", "voice"]);
 // media route instead, so the capsule payload stays small.
 const WITHOUT_MEDIA = { photoDataUrl: 0, audioDataUrl: 0 };
 
-const toPlain = (doc) => {
+const toPlain = (doc, viewerId) => {
   if (!doc) return null;
+  const { revealedBy, ...rest } = doc;
   return {
-    ...doc,
+    ...rest,
     id: doc._id.toString(),
     capsuleId: doc.capsuleId.toString(),
-    authorId: doc.authorId.toString()
+    authorId: doc.authorId.toString(),
+    revealed: Boolean(viewerId) && (revealedBy || []).includes(viewerId)
   };
 };
 
@@ -48,7 +50,8 @@ export const createContribution = async ({
     audioName: audioName || null,
     authorId: new ObjectId(authorId),
     authorName: authorName?.trim() || "Anonymous",
-    createdAt: new Date()
+    createdAt: new Date(),
+    revealedBy: []
   };
 
   // Predictions can be resolved as correct/incorrect once the capsule opens;
@@ -61,7 +64,7 @@ export const createContribution = async ({
   return toPlain({ ...doc, _id: result.insertedId });
 };
 
-export const findContributionsByCapsuleId = async (capsuleId) => {
+export const findContributionsByCapsuleId = async (capsuleId, viewerId) => {
   if (!ObjectId.isValid(capsuleId)) {
     return [];
   }
@@ -72,7 +75,7 @@ export const findContributionsByCapsuleId = async (capsuleId) => {
     .sort({ createdAt: 1 })
     .toArray();
 
-  return contributions.map(toPlain);
+  return contributions.map((doc) => toPlain(doc, viewerId));
 };
 
 export const findContributionsByAuthor = async (capsuleId, authorId) => {
@@ -92,7 +95,7 @@ export const findContributionsByAuthor = async (capsuleId, authorId) => {
   return contributions.map(toPlain);
 };
 
-export const findContributionById = async (id) => {
+export const findContributionById = async (id, viewerId) => {
   if (!ObjectId.isValid(id)) {
     return null;
   }
@@ -101,7 +104,38 @@ export const findContributionById = async (id) => {
     _id: new ObjectId(id)
   });
 
-  return toPlain(contribution);
+  return toPlain(contribution, viewerId);
+};
+
+// Marks a contribution as revealed for a specific viewer — reveal progress
+// is per-account, so it stays put across browsers/devices and doesn't
+// depend on local storage surviving.
+export const markContributionRevealed = async (id, viewerId) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  await contributionsCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $addToSet: { revealedBy: viewerId } }
+  );
+
+  return findContributionById(id, viewerId);
+};
+
+// Clears one viewer's reveal progress across an entire capsule, for
+// "start over" — everyone else's reveal state is untouched.
+export const resetRevealedForViewer = async (capsuleId, viewerId) => {
+  if (!ObjectId.isValid(capsuleId)) {
+    return 0;
+  }
+
+  const result = await contributionsCollection().updateMany(
+    { capsuleId: new ObjectId(capsuleId) },
+    { $pull: { revealedBy: viewerId } }
+  );
+
+  return result.modifiedCount;
 };
 
 export const updateContribution = async (

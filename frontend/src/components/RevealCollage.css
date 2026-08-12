@@ -1,0 +1,76 @@
+@import "../styles/palette.css";
+
+.reveal-collage-restart {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
+.reveal-collage {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  align-items: start;
+  gap: 1.1rem;
+  padding: 0.5rem;
+}
+
+.reveal-collage-item {
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.35s ease;
+}
+
+.reveal-collage-item.is-revealed {
+  transform: rotate(0deg);
+  animation: reveal-collage-open 0.4s ease-out;
+}
+
+.reveal-envelope {
+  width: 130px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--parchment);
+  border: 1px solid var(--almond-silk);
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(74, 62, 50, 0.16);
+  color: var(--space-indigo);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.reveal-envelope:hover,
+.reveal-envelope:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(74, 62, 50, 0.22);
+}
+
+.reveal-envelope-label {
+  font-size: 0.75rem;
+  color: var(--dusty-grape);
+}
+
+@keyframes reveal-collage-open {
+  from {
+    opacity: 0.4;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-collage-item,
+  .reveal-collage-item.is-revealed {
+    animation: none;
+    transition: none;
+  }
+}
