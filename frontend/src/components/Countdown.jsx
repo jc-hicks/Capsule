@@ -36,14 +36,25 @@ export default function Countdown({ openDate, onComplete }) {
   const { days, hours, minutes, seconds } = remaining;
   const pad = (n) => String(n).padStart(2, "0");
 
+  const units = [
+    days > 0 && { value: days, name: "d" },
+    { value: pad(hours), name: "h" },
+    { value: pad(minutes), name: "m" },
+    { value: pad(seconds), name: "s" }
+  ].filter(Boolean);
+
   return (
-    <p className="countdown">
+    <div className="countdown">
       <span className="countdown-label">Countdown</span>
-      <span className="countdown-value">
-        {days > 0 && `${days}d `}
-        {pad(hours)}:{pad(minutes)}:{pad(seconds)}
-      </span>
-    </p>
+      <div className="countdown-units">
+        {units.map((unit) => (
+          <span className="countdown-unit" key={unit.name}>
+            <span className="countdown-unit-value">{unit.value}</span>
+            <span className="countdown-unit-name">{unit.name}</span>
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 

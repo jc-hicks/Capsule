@@ -6,11 +6,13 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
 import Countdown from "./Countdown.jsx";
+import { DEFAULT_CAPSULE_THEME } from "../styles/capsuleThemes.js";
 import "./Capsule.css";
 
 export default function Capsule({ capsule }) {
   const members = capsule.memberNames ?? [];
   const isLocked = capsule.locked ?? false;
+  const themeClass = `capsule-theme-${capsule.theme || DEFAULT_CAPSULE_THEME}`;
   // The share code is only ever included in the API response for the
   // capsule's owner, so its presence doubles as an ownership signal here.
   const isOwner = Boolean(capsule.shareCode);
@@ -40,7 +42,7 @@ export default function Capsule({ capsule }) {
   }
 
   return (
-    <Card className="capsule-card">
+    <Card className={`capsule-card ${themeClass}`}>
       <Card.Body>
         <div className="capsule-card-header">
           <Card.Title>{capsule.name}</Card.Title>
@@ -169,6 +171,7 @@ Capsule.propTypes = {
     openDate: PropTypes.string,
     submissionDeadline: PropTypes.string,
     locked: PropTypes.bool,
-    shareCode: PropTypes.string
+    shareCode: PropTypes.string,
+    theme: PropTypes.string
   }).isRequired
 };

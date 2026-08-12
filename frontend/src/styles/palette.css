@@ -9,7 +9,116 @@
   --parchment: #f2e9e4ff;
 
   --font-sans: "Lilex", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Default capsule accent; overridden per capsule by a .capsule-theme-*
+     class (see capsuleThemes.js for the matching id/label list). */
+  --capsule-accent: var(--space-indigo);
 }
+
+.capsule-theme-indigo {
+  --capsule-accent: #22223b;
+}
+
+.capsule-theme-rose {
+  --capsule-accent: #7a3b42;
+}
+
+.capsule-theme-amber {
+  --capsule-accent: #7a5a1e;
+}
+
+.capsule-theme-sage {
+  --capsule-accent: #3f5a44;
+}
+
+.capsule-theme-slate {
+  --capsule-accent: #2f4858;
+}
+
+.capsule-theme-plum {
+  --capsule-accent: #4f2f52;
+}
+
+.capsule-theme-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.capsule-theme-swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.capsule-theme-swatch:hover {
+  transform: scale(1.08);
+}
+
+.capsule-theme-swatch:focus-visible {
+  outline: 2px solid var(--space-indigo);
+  outline-offset: 2px;
+}
+
+.capsule-theme-swatch[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 3px var(--parchment),
+    0 0 0 5px var(--space-indigo);
+}
+
+/* App-wide button treatment so pages that don't otherwise reskin Bootstrap
+   still match the rest of the app's palette instead of default Bootstrap
+   blue leaking through. */
+.btn {
+  border-radius: 0.6rem;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--dusty-grape);
+  border-color: var(--dusty-grape);
+  color: var(--parchment);
+}
+
+.btn-primary:disabled {
+  background-color: var(--lilac-ash);
+  border-color: var(--lilac-ash);
+  color: var(--parchment);
+}
+
+.btn-outline-primary,
+.btn-outline-secondary {
+  border-color: var(--dusty-grape);
+  color: var(--space-indigo);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: var(--space-indigo);
+  border-color: var(--space-indigo);
+  color: var(--parchment);
+}
+
+.btn-link {
+  color: var(--space-indigo);
+}
+
 body,
 .btn,
 .form-control,

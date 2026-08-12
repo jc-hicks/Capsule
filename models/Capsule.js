@@ -2,6 +2,18 @@ import { ObjectId } from "mongodb";
 import { capsulesCollection, usersCollection } from "../config/db.js";
 import { generateShareCode, normalizeShareCode } from "./shareCode.js";
 
+// Kept in sync with frontend/src/styles/capsuleThemes.js (ids only — the
+// backend doesn't need the display colors, just to validate what's stored).
+export const CAPSULE_THEME_IDS = [
+  "indigo",
+  "rose",
+  "amber",
+  "sage",
+  "slate",
+  "plum"
+];
+export const DEFAULT_CAPSULE_THEME = "indigo";
+
 // Members are stored as user ids; resolve them to display names for the client.
 // Anything that isn't a known user id (e.g. a legacy email) is passed through.
 const resolveMemberNames = async (members) => {
@@ -58,6 +70,9 @@ export const createCapsule = async (capsule, ownerId) => {
     description: capsule.description,
     openDate: capsule.openDate,
     submissionDeadline: capsule.submissionDeadline,
+    theme: CAPSULE_THEME_IDS.includes(capsule.theme)
+      ? capsule.theme
+      : DEFAULT_CAPSULE_THEME,
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
     shareCode: generateShareCode(ownerId),
@@ -106,12 +121,22 @@ export const addMemberToCapsule = async (id, userId) => {
 export const updateCapsule = async (id, ownerId, updates) => {
   if (!ObjectId.isValid(id)) return null;
 
-  const allowed = ["name", "description", "openDate", "submissionDeadline"];
+  const allowed = [
+    "name",
+    "description",
+    "openDate",
+    "submissionDeadline",
+    "theme"
+  ];
   const changes = {};
   for (const field of allowed) {
-    if (updates[field] !== undefined) {
-      changes[field] = updates[field];
+    if (updates[field] === undefined) continue;
+    // Silently ignore an unrecognized theme rather than erroring — it's a
+    // cosmetic field, not a data-integrity one.
+    if (field === "theme" && !CAPSULE_THEME_IDS.includes(updates[field])) {
+      continue;
     }
+    changes[field] = updates[field];
   }
 
   if (Object.keys(changes).length === 0) {

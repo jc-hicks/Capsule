@@ -516,7 +516,7 @@ router.get(
 );
 
 router.post("/capsules", isAuthenticated, async (req, res, next) => {
-  const { name, description, openDate, submissionDeadline } = req.body;
+  const { name, description, openDate, submissionDeadline, theme } = req.body;
 
   if (!name || !description || !openDate || !submissionDeadline) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -530,7 +530,7 @@ router.post("/capsules", isAuthenticated, async (req, res, next) => {
 
   try {
     const newCapsule = await createCapsule(
-      { name, description, openDate, submissionDeadline },
+      { name, description, openDate, submissionDeadline, theme },
       req.user.id
     );
     res.status(201).json(newCapsule);
@@ -560,7 +560,7 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
       });
     }
 
-    const { name, description, openDate, submissionDeadline } = req.body;
+    const { name, description, openDate, submissionDeadline, theme } = req.body;
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (description !== undefined) updates.description = description;
@@ -568,6 +568,7 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
     if (submissionDeadline !== undefined) {
       updates.submissionDeadline = submissionDeadline;
     }
+    if (theme !== undefined) updates.theme = theme;
 
     if (
       (updates.name !== undefined && !updates.name) ||

@@ -13,6 +13,10 @@ import Spinner from "react-bootstrap/Spinner";
 import ContributionCard from "../components/ContributionCard.jsx";
 import RevealCollage from "../components/RevealCollage.jsx";
 import VoiceRecorder from "../components/VoiceRecorder.jsx";
+import {
+  CAPSULE_THEMES,
+  DEFAULT_CAPSULE_THEME
+} from "../styles/capsuleThemes.js";
 import "./CapsuleDetailPage.css";
 
 // Photo listed first: usability sessions found it's the most common
@@ -83,6 +87,7 @@ export default function CapsuleDetailPage() {
   const [editDescription, setEditDescription] = useState("");
   const [editOpenDate, setEditOpenDate] = useState("");
   const [editSubmissionDeadline, setEditSubmissionDeadline] = useState("");
+  const [editTheme, setEditTheme] = useState(DEFAULT_CAPSULE_THEME);
   const [savingEdit, setSavingEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [revealMode, setRevealMode] = useState("intro");
@@ -364,6 +369,7 @@ export default function CapsuleDetailPage() {
         ? new Date(capsule.submissionDeadline).toISOString().slice(0, 10)
         : ""
     );
+    setEditTheme(capsule.theme || DEFAULT_CAPSULE_THEME);
     setError(null);
     setIsEditing(true);
   };
@@ -378,7 +384,8 @@ export default function CapsuleDetailPage() {
         name: editName,
         description: editDescription,
         openDate: editOpenDate,
-        submissionDeadline: editSubmissionDeadline
+        submissionDeadline: editSubmissionDeadline,
+        theme: editTheme
       };
 
       const response = await fetch(`/api/capsules/${id}`, {
@@ -471,7 +478,11 @@ export default function CapsuleDetailPage() {
             <Alert variant="danger">{error}</Alert>
           ) : capsule ? (
             <>
-              <Card className="capsule-hero-card">
+              <Card
+                className={`capsule-hero-card capsule-theme-${
+                  capsule.theme || DEFAULT_CAPSULE_THEME
+                }`}
+              >
                 <Card.Body>
                   {isEditing ? (
                     <Form onSubmit={handleUpdate} className="capsule-edit-form">
@@ -520,6 +531,28 @@ export default function CapsuleDetailPage() {
                         <Form.Text>
                           After this date no new entries or edits are accepted.
                         </Form.Text>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Capsule color</Form.Label>
+                        <div
+                          className="capsule-theme-picker"
+                          role="group"
+                          aria-label="Capsule color"
+                        >
+                          {CAPSULE_THEMES.map((option) => (
+                            <button
+                              key={option.id}
+                              type="button"
+                              className="capsule-theme-swatch"
+                              style={{ backgroundColor: option.accent }}
+                              aria-pressed={editTheme === option.id}
+                              aria-label={option.label}
+                              title={option.label}
+                              onClick={() => setEditTheme(option.id)}
+                              disabled={savingEdit}
+                            />
+                          ))}
+                        </div>
                       </Form.Group>
                       <div className="capsule-edit-actions">
                         <Button type="submit" disabled={savingEdit}>

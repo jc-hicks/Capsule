@@ -4,7 +4,7 @@
   height: 100%;
   background: var(--parchment);
   border: 1px solid var(--parchment);
-  border-top: 3px solid var(--space-indigo);
+  border-top: 3px solid var(--capsule-accent, var(--space-indigo));
   border-radius: 0.75rem;
   box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
   transition:
@@ -38,7 +38,7 @@
 }
 
 .capsule-role-owner {
-  background: var(--space-indigo);
+  background: var(--capsule-accent, var(--space-indigo));
   color: var(--parchment);
 }
 

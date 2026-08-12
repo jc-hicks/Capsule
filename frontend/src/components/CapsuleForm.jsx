@@ -5,6 +5,10 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
+import {
+  CAPSULE_THEMES,
+  DEFAULT_CAPSULE_THEME
+} from "../styles/capsuleThemes.js";
 import "./CapsuleForm.css";
 
 export default function CapsuleForm({ onSubmit }) {
@@ -12,6 +16,7 @@ export default function CapsuleForm({ onSubmit }) {
   const [description, setDescription] = useState("");
   const [openDate, setOpenDate] = useState("");
   const [submissionDeadline, setSubmissionDeadline] = useState("");
+  const [theme, setTheme] = useState(DEFAULT_CAPSULE_THEME);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +24,8 @@ export default function CapsuleForm({ onSubmit }) {
       name,
       description,
       openDate,
-      submissionDeadline
+      submissionDeadline,
+      theme
     });
     // Keep the entered values on screen if the create failed so the user can
     // fix and resubmit instead of losing their input.
@@ -28,6 +34,7 @@ export default function CapsuleForm({ onSubmit }) {
       setDescription("");
       setOpenDate("");
       setSubmissionDeadline("");
+      setTheme(DEFAULT_CAPSULE_THEME);
     }
   };
 
@@ -74,6 +81,27 @@ export default function CapsuleForm({ onSubmit }) {
           After this date the capsule is sealed — no new entries or edits — and
           the contents stay hidden until the open date.
         </Form.Text>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Capsule color</Form.Label>
+        <div
+          className="capsule-theme-picker"
+          role="group"
+          aria-label="Capsule color"
+        >
+          {CAPSULE_THEMES.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className="capsule-theme-swatch"
+              style={{ backgroundColor: option.accent }}
+              aria-pressed={theme === option.id}
+              aria-label={option.label}
+              title={option.label}
+              onClick={() => setTheme(option.id)}
+            />
+          ))}
+        </div>
       </Form.Group>
       <Button type="submit">Submit</Button>
     </Form>
