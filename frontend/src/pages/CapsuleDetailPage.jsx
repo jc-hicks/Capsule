@@ -838,6 +838,10 @@ export default function CapsuleDetailPage() {
                               : "Collecting"}
                         </span>
                       </div>
+                      <p className="capsule-reveal-note">
+                        Only the capsule owner can mark predictions as true or
+                        false, and only after the capsule opens.
+                      </p>
 
                       {revealState?.isOpen ? (
                         contributions.length > 0 ? (

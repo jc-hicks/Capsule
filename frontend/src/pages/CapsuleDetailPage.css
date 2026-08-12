@@ -226,6 +226,12 @@
   border-bottom-color: var(--dusty-grape);
 }
 
+.capsule-reveal-note {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.85rem;
+  color: var(--dusty-grape);
+}
+
 .capsule-locked-state {
   min-height: 220px;
   display: flex;
