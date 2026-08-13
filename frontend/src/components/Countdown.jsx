@@ -13,7 +13,11 @@ const getRemaining = (openDate) => {
   return { total, days, hours, minutes, seconds };
 };
 
-export default function Countdown({ openDate, onComplete }) {
+export default function Countdown({
+  openDate,
+  onComplete,
+  label = "Countdown"
+}) {
   const [remaining, setRemaining] = useState(() => getRemaining(openDate));
   const [prevOpenDate, setPrevOpenDate] = useState(openDate);
   if (openDate !== prevOpenDate) {
@@ -45,7 +49,7 @@ export default function Countdown({ openDate, onComplete }) {
 
   return (
     <div className="countdown">
-      <span className="countdown-label">Countdown</span>
+      <span className="countdown-label">{label}</span>
       <div className="countdown-units">
         {units.map((unit) => (
           <span className="countdown-unit" key={unit.name}>
@@ -60,5 +64,6 @@ export default function Countdown({ openDate, onComplete }) {
 
 Countdown.propTypes = {
   openDate: PropTypes.string.isRequired,
-  onComplete: PropTypes.func
+  onComplete: PropTypes.func,
+  label: PropTypes.string
 };

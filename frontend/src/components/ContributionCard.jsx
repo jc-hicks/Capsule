@@ -187,7 +187,8 @@ export default function ContributionCard({
 
         {sealed ? (
           <p className="contribution-sealed">
-            Sealed until the open date. Use Edit to change it before then.
+            Sealed until the open date. Submissions have closed, so this can no
+            longer be changed.
           </p>
         ) : contribution.type === "photo" ? (
           <div className="contribution-photo">

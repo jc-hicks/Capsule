@@ -29,17 +29,20 @@ export default function Capsule({ capsule }) {
     window.setTimeout(() => setCodeCopied(false), 2000);
   };
 
-  let openLabel = null;
-  if (capsule.openDate) {
-    openLabel = new Date(capsule.openDate).toLocaleDateString(undefined, {
+  const formatDate = (value) =>
+    new Date(value).toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
       day: "numeric",
-      // openDate is a calendar date (no time); format it in UTC so it shows
-      // exactly the day that was picked instead of shifting a day in local time.
       timeZone: "UTC"
     });
-  }
+
+  const openLabel = capsule.openDate ? formatDate(capsule.openDate) : null;
+
+  const lockDate = capsule.submissionDeadline || capsule.openDate;
+  const submissionsClosed = capsule.submissionsClosed ?? false;
+  const collecting = !isLocked ? false : !submissionsClosed;
+  const lockLabel = collecting && lockDate ? formatDate(lockDate) : null;
 
   return (
     <Card className={`capsule-card ${themeClass}`}>
@@ -143,13 +146,22 @@ export default function Capsule({ capsule }) {
         )}
         {(openLabel || (isLocked && capsule.openDate)) && (
           <div className="capsule-schedule">
-            {openLabel && (
-              <p className="capsule-open-date">
-                {isLocked ? "Opens" : "Opened"} {openLabel}
-              </p>
-            )}
-            {isLocked && capsule.openDate && (
-              <Countdown openDate={capsule.openDate} />
+            {collecting && lockLabel ? (
+              <>
+                <p className="capsule-open-date">Locks on: {lockLabel}</p>
+                <Countdown openDate={lockDate} label="Closes" />
+              </>
+            ) : (
+              <>
+                {openLabel && (
+                  <p className="capsule-open-date">
+                    {isLocked ? "Opens" : "Opened"} {openLabel}
+                  </p>
+                )}
+                {isLocked && capsule.openDate && (
+                  <Countdown openDate={capsule.openDate} />
+                )}
+              </>
             )}
           </div>
         )}
@@ -167,6 +179,7 @@ Capsule.propTypes = {
     openDate: PropTypes.string,
     submissionDeadline: PropTypes.string,
     locked: PropTypes.bool,
+    submissionsClosed: PropTypes.bool,
     shareCode: PropTypes.string,
     theme: PropTypes.string
   }).isRequired
