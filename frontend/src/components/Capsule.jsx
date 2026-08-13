@@ -45,7 +45,11 @@ export default function Capsule({ capsule }) {
     <Card className={`capsule-card ${themeClass}`}>
       <Card.Body>
         <div className="capsule-card-header">
-          <Card.Title>{capsule.name}</Card.Title>
+          <Card.Title>
+            <Link to={`/capsules/${capsule.id}`} className="capsule-card-link">
+              {capsule.name}
+            </Link>
+          </Card.Title>
           <span
             className={`capsule-role-badge ${
               isOwner ? "capsule-role-owner" : "capsule-role-member"
@@ -149,14 +153,6 @@ export default function Capsule({ capsule }) {
             )}
           </div>
         )}
-        <Button
-          as={Link}
-          to={`/capsules/${capsule.id}`}
-          variant="outline-primary"
-          size="sm"
-        >
-          View capsule
-        </Button>
       </Card.Body>
     </Card>
   );
