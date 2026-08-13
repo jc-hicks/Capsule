@@ -18,7 +18,6 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--parchment);
-  opacity: 0.75;
 }
 
 .countdown-units {
@@ -47,5 +46,4 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--parchment);
-  opacity: 0.75;
 }

@@ -373,7 +373,13 @@
   color: var(--space-indigo);
 }
 
-.capsule-detail-breadcrumb a,
+.capsule-detail-breadcrumb a.btn-link {
+  /* Sits directly on the page's almond-silk background (not a parchment
+     card), which needs a darker color than dusty-grape to clear 4.5:1.
+     Specificity has to beat `.capsule-detail-page .btn-link` below. */
+  color: var(--space-indigo);
+}
+
 .capsule-detail-page .btn-link {
   color: var(--dusty-grape);
 }

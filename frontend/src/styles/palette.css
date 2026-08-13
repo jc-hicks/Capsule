@@ -119,6 +119,17 @@
   color: var(--space-indigo);
 }
 
+/* Bootstrap's default danger red (#dc3545) only clears ~3.8:1 against our
+   parchment/almond-silk backgrounds — darken it to actually pass 4.5:1. */
+.btn-outline-danger {
+  --bs-btn-color: #b02525;
+  --bs-btn-border-color: #b02525;
+  --bs-btn-hover-bg: #b02525;
+  --bs-btn-hover-border-color: #b02525;
+  --bs-btn-active-bg: #b02525;
+  --bs-btn-active-border-color: #b02525;
+}
+
 body,
 .btn,
 .form-control,

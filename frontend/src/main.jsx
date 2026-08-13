@@ -8,8 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/palette.css";
 
 import AppLayout from "./components/AppLayout.jsx";
-import IndexPage from "./pages/IndexPage.jsx";
 
+const IndexPage = lazy(() => import("./pages/IndexPage.jsx"));
 const CapsuleDetailPage = lazy(() => import("./pages/CapsuleDetailPage.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
 const Register = lazy(() => import("./pages/Register.jsx"));

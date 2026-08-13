@@ -1,5 +1,6 @@
 import "dotenv/config";
 import path from "node:path";
+import compression from "compression";
 import express from "express";
 import passport from "./config/passport.js";
 import session from "express-session";
@@ -15,6 +16,10 @@ const PORT = process.env.PORT || 3000;
 // Trusting it lets Express recognize the request as secure so the session
 // cookie (secure: true in production) is actually set.
 app.set("trust proxy", 1);
+
+// Gzip text responses (the built JS/CSS bundle and JSON API payloads) —
+// without this, Lighthouse's "Enable text compression" audit fails outright.
+app.use(compression());
 
 // Photos and voice notes are sent as base64 data URLs, which are far larger
 // than the 100kb express default, so raise the request body limit.
