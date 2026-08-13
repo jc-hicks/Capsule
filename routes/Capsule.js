@@ -85,6 +85,18 @@ const sendContributionMedia = async (req, res, next, kind) => {
   }
 };
 
+const isBeforeToday = (value) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return false;
+  const now = new Date();
+  const todayStart = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate()
+  );
+  return date.getTime() < todayStart;
+};
+
 const getCapsuleOpenState = (capsule) => {
   const openDate = new Date(capsule.openDate);
   const now = new Date();
@@ -522,6 +534,18 @@ router.post("/capsules", isAuthenticated, async (req, res, next) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  if (isBeforeToday(openDate)) {
+    return res
+      .status(400)
+      .json({ error: "The open date cannot be in the past" });
+  }
+
+  if (isBeforeToday(submissionDeadline)) {
+    return res
+      .status(400)
+      .json({ error: "The submission deadline cannot be in the past" });
+  }
+
   if (new Date(submissionDeadline) > new Date(openDate)) {
     return res.status(400).json({
       error: "Submissions must close on or before the open date"
@@ -586,6 +610,39 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
       updates.submissionDeadline ??
       capsule.submissionDeadline ??
       capsule.openDate;
+
+    const sameDay = (a, b) => {
+      const first = new Date(a);
+      const second = new Date(b);
+      if (Number.isNaN(first.getTime()) || Number.isNaN(second.getTime())) {
+        return false;
+      }
+      return (
+        first.toISOString().slice(0, 10) === second.toISOString().slice(0, 10)
+      );
+    };
+
+    const openDateChanged =
+      updates.openDate !== undefined &&
+      !sameDay(updates.openDate, capsule.openDate);
+    const deadlineChanged =
+      updates.submissionDeadline !== undefined &&
+      !sameDay(
+        updates.submissionDeadline,
+        capsule.submissionDeadline ?? capsule.openDate
+      );
+
+    if (openDateChanged && isBeforeToday(nextOpenDate)) {
+      return res
+        .status(400)
+        .json({ error: "The open date cannot be in the past" });
+    }
+
+    if (deadlineChanged && isBeforeToday(nextDeadline)) {
+      return res
+        .status(400)
+        .json({ error: "The submission deadline cannot be in the past" });
+    }
 
     if (new Date(nextDeadline) > new Date(nextOpenDate)) {
       return res.status(400).json({

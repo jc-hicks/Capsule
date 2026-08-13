@@ -13,6 +13,7 @@ import Spinner from "react-bootstrap/Spinner";
 import ContributionCard from "../components/ContributionCard.jsx";
 import RevealCollage from "../components/RevealCollage.jsx";
 import VoiceRecorder from "../components/VoiceRecorder.jsx";
+import { todayInputValue } from "../utils/dates.js";
 import {
   CAPSULE_THEMES,
   DEFAULT_CAPSULE_THEME
@@ -511,6 +512,7 @@ export default function CapsuleDetailPage() {
                         <Form.Control
                           type="date"
                           value={editOpenDate}
+                          min={todayInputValue()}
                           onChange={(event) =>
                             setEditOpenDate(event.target.value)
                           }
@@ -522,6 +524,7 @@ export default function CapsuleDetailPage() {
                         <Form.Control
                           type="date"
                           value={editSubmissionDeadline}
+                          min={todayInputValue()}
                           max={editOpenDate || undefined}
                           onChange={(event) =>
                             setEditSubmissionDeadline(event.target.value)
