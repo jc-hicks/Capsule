@@ -249,27 +249,21 @@ export default function CapsuleDetailPage() {
       const payload = { type, content };
 
       if (type === "photo") {
-        if (photoFile) {
-          payload.photoDataUrl = await readFileAsDataUrl(photoFile);
-          payload.photoName = photoFile.name;
-        } else if (!editingId) {
+        if (!photoFile) {
           throw new Error("Choose a photo to upload.");
         }
+        payload.photoDataUrl = await readFileAsDataUrl(photoFile);
+        payload.photoName = photoFile.name;
       } else if (type === "voice") {
-        if (audioBlob) {
-          payload.audioDataUrl = await readFileAsDataUrl(audioBlob);
-          payload.audioName = `voice-note.${audioExtension(audioBlob.type)}`;
-        } else if (!editingId) {
+        if (!audioBlob) {
           throw new Error("Record a voice note first.");
         }
+        payload.audioDataUrl = await readFileAsDataUrl(audioBlob);
+        payload.audioName = `voice-note.${audioExtension(audioBlob.type)}`;
       }
 
-      const url = editingId
-        ? `/api/capsules/${id}/contributions/${editingId}`
-        : `/api/capsules/${id}/contributions`;
-
-      const response = await fetch(url, {
-        method: editingId ? "PUT" : "POST",
+      const response = await fetch(`/api/capsules/${id}/contributions`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
@@ -293,12 +287,46 @@ export default function CapsuleDetailPage() {
 
   const startEditContribution = (contribution) => {
     setEditingId(contribution.id);
-    setType(contribution.type);
-    setContent(contribution.content || "");
-    setPhotoFile(null);
-    setAudioBlob(null);
-    setRecorderKey((key) => key + 1);
     setError(null);
+  };
+
+  const saveContributionEdit = async (contribution, draft) => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const payload = { content: draft.content };
+
+      if (contribution.type === "photo" && draft.photoFile) {
+        payload.photoDataUrl = await readFileAsDataUrl(draft.photoFile);
+        payload.photoName = draft.photoFile.name;
+      } else if (contribution.type === "voice" && draft.audioBlob) {
+        payload.audioDataUrl = await readFileAsDataUrl(draft.audioBlob);
+        payload.audioName = `voice-note.${audioExtension(draft.audioBlob.type)}`;
+      }
+
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to save contribution");
+      }
+
+      await reloadCapsule();
+      setEditingId(null);
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDeleteContribution = async (contribution) => {
@@ -696,11 +724,7 @@ export default function CapsuleDetailPage() {
                     <>
                       <Card className="capsule-contribution-card">
                         <Card.Body>
-                          <h2>
-                            {editingId
-                              ? "Edit your contribution"
-                              : "Add a contribution"}
-                          </h2>
+                          <h2>Add a contribution</h2>
                           <Form onSubmit={handleContributionSubmit}>
                             <Form.Group className="mb-3">
                               <Form.Label>Contribution type</Form.Label>
@@ -719,11 +743,7 @@ export default function CapsuleDetailPage() {
                                         : "outline-secondary"
                                     }
                                     onClick={() => setType(option.value)}
-                                    disabled={
-                                      !canContribute ||
-                                      submitting ||
-                                      Boolean(editingId)
-                                    }
+                                    disabled={!canContribute || submitting}
                                   >
                                     {option.label}
                                   </Button>
@@ -747,9 +767,8 @@ export default function CapsuleDetailPage() {
                                   />
                                 </Form.Group>
                                 <Form.Text className="text-muted">
-                                  {editingId
-                                    ? "Leave this empty to keep the current photo, or choose a new one to replace it."
-                                    : "The image is stored with the capsule so it can be revealed later."}
+                                  The image is stored with the capsule so it can
+                                  be revealed later.
                                 </Form.Text>
                               </>
                             ) : type === "voice" ? (
@@ -758,11 +777,6 @@ export default function CapsuleDetailPage() {
                                 <VoiceRecorder
                                   key={recorderKey}
                                   onRecorded={setAudioBlob}
-                                  existingLabel={
-                                    editingId
-                                      ? "Record again to replace your saved note."
-                                      : ""
-                                  }
                                 />
                               </Form.Group>
                             ) : (
@@ -802,22 +816,8 @@ export default function CapsuleDetailPage() {
                                 type="submit"
                                 disabled={!canContribute || submitting}
                               >
-                                {submitting
-                                  ? "Saving…"
-                                  : editingId
-                                    ? "Update contribution"
-                                    : "Save contribution"}
+                                {submitting ? "Saving…" : "Save contribution"}
                               </Button>
-                              {editingId && (
-                                <Button
-                                  type="button"
-                                  variant="outline-secondary"
-                                  onClick={resetContributionForm}
-                                  disabled={submitting}
-                                >
-                                  Cancel
-                                </Button>
-                              )}
                             </div>
                           </Form>
                         </Card.Body>
@@ -830,7 +830,7 @@ export default function CapsuleDetailPage() {
                             {locked && (
                               <p className="text-muted">
                                 {canContribute
-                                  ? "Your entries stay sealed until the open date. You can edit or delete them until submissions close."
+                                  ? "Only you can see these until the open date. You can edit or delete them until submissions close."
                                   : "Submissions have closed, so these entries are locked in until the open date."}
                               </p>
                             )}
@@ -839,9 +839,14 @@ export default function CapsuleDetailPage() {
                                 <ContributionCard
                                   key={contribution.id}
                                   contribution={contribution}
-                                  sealed={locked}
+                                  sealed={submissionsClosed && locked}
                                   showActions={canContribute}
+                                  showOutcome={!locked}
+                                  isEditing={editingId === contribution.id}
+                                  savingEdit={submitting}
                                   onEdit={startEditContribution}
+                                  onCancelEdit={() => setEditingId(null)}
+                                  onSaveEdit={saveContributionEdit}
                                   onDelete={handleDeleteContribution}
                                 />
                               ))}
