@@ -16,27 +16,27 @@
 }
 
 .capsule-theme-indigo {
-  --capsule-accent: #22223b;
+  --capsule-accent: #4c3bcf;
 }
 
 .capsule-theme-rose {
-  --capsule-accent: #7a3b42;
+  --capsule-accent: #a61e4d;
 }
 
 .capsule-theme-amber {
-  --capsule-accent: #7a5a1e;
+  --capsule-accent: #a8460b;
 }
 
 .capsule-theme-sage {
-  --capsule-accent: #3f5a44;
+  --capsule-accent: #166534;
 }
 
 .capsule-theme-slate {
-  --capsule-accent: #2f4858;
+  --capsule-accent: #0a6275;
 }
 
 .capsule-theme-plum {
-  --capsule-accent: #4f2f52;
+  --capsule-accent: #862e9c;
 }
 
 .capsule-theme-picker {

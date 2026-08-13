@@ -27,18 +27,13 @@
 .capsule-reveal-card {
   background: var(--parchment);
   border: 1px solid var(--parchment);
-  border-top: 3px solid var(--space-indigo);
+  border-top: 3px solid var(--capsule-accent, var(--space-indigo));
   border-radius: 0.75rem;
   box-shadow: 0 6px 18px rgba(34, 34, 59, 0.08);
 }
 
-.capsule-hero-card {
-  border-top-color: var(--capsule-accent, var(--space-indigo));
-}
-
 .capsule-reveal-card {
   background: linear-gradient(175deg, var(--parchment) 0%, #ece0d6 100%);
-  border-top: 3px solid var(--dusty-grape);
   border-radius: 1rem;
   box-shadow:
     0 14px 32px rgba(74, 62, 50, 0.16),
@@ -83,7 +78,7 @@
 .capsule-hero-top h1 {
   margin: 0.65rem 0 0.35rem;
   font-weight: 700;
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
 }
 
 .capsule-hero-description {
@@ -99,6 +94,7 @@
   gap: 0.15rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
+  border-left: 4px solid var(--capsule-accent, var(--space-indigo));
   background: rgba(255, 255, 255, 0.72);
   min-width: 170px;
 }
@@ -109,7 +105,7 @@
 }
 
 .capsule-hero-date strong {
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
 }
 
 .capsule-hero-date .capsule-hero-deadline {
@@ -142,13 +138,13 @@
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
-  border: 1px dashed var(--lilac-ash);
+  border: 1px dashed var(--capsule-accent, var(--lilac-ash));
   background: rgba(34, 34, 59, 0.04);
 }
 
 .capsule-invite-label {
   font-weight: 600;
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
   margin-bottom: 0.5rem;
 }
 
@@ -201,7 +197,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
   background: rgba(255, 255, 255, 0.75);
   padding: 0.3rem 0.6rem;
   border-radius: 0.5rem;
@@ -222,9 +218,9 @@
   font-size: 1.15rem;
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
-  border-bottom: 2px solid var(--space-indigo);
+  border-bottom: 2px solid var(--capsule-accent, var(--space-indigo));
   display: inline-block;
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
 }
 
 .capsule-reveal-header {
@@ -237,7 +233,6 @@
 
 .capsule-reveal-header h2 {
   margin-bottom: 0;
-  border-bottom-color: var(--dusty-grape);
 }
 
 .capsule-reveal-note {
@@ -259,15 +254,6 @@
   border: 1px dashed var(--almond-silk);
   border-radius: 8px;
   background: rgba(34, 34, 59, 0.03);
-}
-
-.capsule-locked-countdown {
-  margin: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--space-indigo);
 }
 
 .contribution-list {
@@ -363,6 +349,18 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.capsule-hero-card .btn-outline-primary {
+  border-color: var(--capsule-accent, var(--dusty-grape));
+  color: var(--capsule-accent, var(--space-indigo));
+}
+
+.capsule-hero-card .btn-outline-primary:hover,
+.capsule-hero-card .btn-outline-primary:focus {
+  background-color: var(--capsule-accent, var(--space-indigo));
+  border-color: var(--capsule-accent, var(--space-indigo));
+  color: var(--parchment);
 }
 
 .capsule-detail-page .alert-info {

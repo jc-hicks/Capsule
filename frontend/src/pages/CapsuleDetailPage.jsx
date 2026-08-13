@@ -11,6 +11,7 @@ import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 
 import ContributionCard from "../components/ContributionCard.jsx";
+import Countdown from "../components/Countdown.jsx";
 import RevealCollage from "../components/RevealCollage.jsx";
 import VoiceRecorder from "../components/VoiceRecorder.jsx";
 import {
@@ -179,12 +180,6 @@ export default function CapsuleDetailPage() {
 
     return () => window.clearTimeout(timeout);
   }, [id, navigate, now, revealState]);
-
-  const countdownLabel = useMemo(() => {
-    if (!revealState?.opensAt) return null;
-    const openAt = new Date(revealState.opensAt).getTime();
-    return formatCountdown(openAt - now);
-  }, [now, revealState]);
 
   const locked = !revealState?.isOpen;
   const submissionsClosed = revealState?.submissionsClosed ?? !locked;
@@ -530,10 +525,14 @@ export default function CapsuleDetailPage() {
     }
   };
 
+  const pageThemeClass = capsule
+    ? `capsule-theme-${capsule.theme || DEFAULT_CAPSULE_THEME}`
+    : "";
+
   return (
     <Row className="capsule-detail-page justify-content-center">
       <Col lg={10} xl={9}>
-        <div className="capsule-detail-shell">
+        <div className={`capsule-detail-shell ${pageThemeClass}`}>
           <div className="capsule-detail-breadcrumb">
             <Button as={Link} to="/" variant="link" className="ps-0">
               Back to capsules
@@ -549,11 +548,7 @@ export default function CapsuleDetailPage() {
             <Alert variant="danger">{error}</Alert>
           ) : capsule ? (
             <>
-              <Card
-                className={`capsule-hero-card capsule-theme-${
-                  capsule.theme || DEFAULT_CAPSULE_THEME
-                }`}
-              >
+              <Card className="capsule-hero-card">
                 <Card.Body>
                   {isEditing ? (
                     <Form onSubmit={handleUpdate} className="capsule-edit-form">
@@ -682,7 +677,7 @@ export default function CapsuleDetailPage() {
                               }
                             )}
                           </strong>
-                          {locked && <small>{countdownLabel} remaining</small>}
+                          {locked && <Countdown openDate={capsule.openDate} />}
                           {canContribute && submissionCountdownLabel && (
                             <small className="capsule-hero-deadline">
                               Submissions close in {submissionCountdownLabel}
@@ -1063,9 +1058,7 @@ export default function CapsuleDetailPage() {
                               ? "The contents stay hidden until the open date. Invitees can still add messages, predictions, and photos until submissions close."
                               : "Submissions have closed and everything inside is sealed until the open date."}
                           </p>
-                          <p className="capsule-locked-countdown">
-                            Opens in {countdownLabel}
-                          </p>
+                          <Countdown openDate={capsule.openDate} />
                         </div>
                       )}
                     </Card.Body>

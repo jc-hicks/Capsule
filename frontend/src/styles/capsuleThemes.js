@@ -1,13 +1,14 @@
-// Curated accent presets for capsule customization. Colors are picked to sit
-// alongside the app's parchment/indigo palette while staying dark enough for
-// safe contrast wherever an accent is used as a background behind light text.
+// Curated accent presets for capsule customization. Picked for vividness —
+// fun, whimsical jewel tones — while every one still clears WCAG's 4.5:1
+// contrast floor against the app's parchment background, since an accent is
+// used both as small text and as a background behind light text.
 export const CAPSULE_THEMES = [
-  { id: "indigo", label: "Indigo", accent: "#22223b" },
-  { id: "rose", label: "Rose", accent: "#7a3b42" },
-  { id: "amber", label: "Amber", accent: "#7a5a1e" },
-  { id: "sage", label: "Sage", accent: "#3f5a44" },
-  { id: "slate", label: "Slate", accent: "#2f4858" },
-  { id: "plum", label: "Plum", accent: "#4f2f52" }
+  { id: "indigo", label: "Indigo", accent: "#4c3bcf" },
+  { id: "rose", label: "Raspberry", accent: "#a61e4d" },
+  { id: "amber", label: "Amber", accent: "#a8460b" },
+  { id: "sage", label: "Emerald", accent: "#166534" },
+  { id: "slate", label: "Teal", accent: "#0a6275" },
+  { id: "plum", label: "Violet", accent: "#862e9c" }
 ];
 
 export const DEFAULT_CAPSULE_THEME = "indigo";

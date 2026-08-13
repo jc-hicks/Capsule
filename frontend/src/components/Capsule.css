@@ -55,7 +55,7 @@
 
 .capsule-card .card-title {
   font-weight: 600;
-  color: var(--space-indigo);
+  color: var(--capsule-accent, var(--space-indigo));
 }
 
 .capsule-card .capsule-description {
@@ -126,13 +126,13 @@
 
 .capsule-card .btn-outline-primary {
   margin-top: 0.35rem;
-  border-color: var(--dusty-grape);
-  color: var(--space-indigo);
+  border-color: var(--capsule-accent, var(--dusty-grape));
+  color: var(--capsule-accent, var(--space-indigo));
 }
 
 .capsule-card .btn-outline-primary:hover,
 .capsule-card .btn-outline-primary:focus {
-  background-color: var(--space-indigo);
-  border-color: var(--space-indigo);
+  background-color: var(--capsule-accent, var(--space-indigo));
+  border-color: var(--capsule-accent, var(--space-indigo));
   color: var(--parchment);
 }
