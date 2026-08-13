@@ -14,8 +14,8 @@ Deployed on Render: <https://capsule-s77x.onrender.com>
 
 ## Authors
 
-- Alexandra (Ally) Descoteaux — Contributions and Reveal (contributions collection, full CRUD, reveal view)
-- James Hicks — Authentication, Capsules, and Invites (users and capsules collections)
+- Alexandra (Ally) Descoteaux — contributions and reveal (contributions collection, full CRUD, reveal view), capsule color themes, likes and comments on contributions, locking the open date, consistent buttons and typography across the app, and the contrast/performance fixes found by running Lighthouse.
+- James Hicks — authentication, capsules, and invites (users and capsules collections), page layout and the countdown component, styling for the login/register/index pages, preventing backdated open dates, inline contribution editing, and making capsule cards clickable.
 
 ## Class Link
 
@@ -27,25 +27,29 @@ Capsule is a digital time capsule. A user creates a capsule with a title and an 
 
 ## Screenshots
 
-### Example of registration
+### Registration
 
 ![Capsule Registration](docs/pics/RegisterCapsule.png)
 
-### Example of Capsule Login
+### Login
 
 ![Capsule Login](docs/pics/LoginCapsule.png)
 
-### Example of Creating a new Capsule
+### Capsule list, with a color picked for each capsule
 
-![Capsule Create view](docs/pics/CapsuleDetails.png)
+![Capsule list](docs/pics/CapsuleHome.png)
 
-### Example of viewing a Capsule that has been created
+### Capsule detail page
 
-![Capsule detail and reveal view](docs/pics/CapsuleDetails.png)
+![Capsule detail view](docs/pics/CapsuleDetails.png)
+
+### Reveal ceremony, with likes and comments on a contribution
+
+![Capsule reveal and reactions](docs/pics/CapsuleReveal.png)
 
 ## What It Does
 
-Capsule lets authenticated users create locked time capsules with an open date. Contributors can add messages, predictions, photos, and voice notes while the capsule is sealed. Once the open date arrives, the capsule unlocks and the contents can be opened as a step-by-step **reveal ceremony** — one contribution at a time — or viewed all at once. After a capsule opens, its owner can mark each **prediction** as having come true or not.
+Capsule lets authenticated users create locked time capsules with an open date, and pick a color for each one so they're easy to tell apart at a glance. An owner can also lock the open date so it can never be pushed back later. Contributors can add messages, predictions, photos, and voice notes while the capsule is sealed. Once the open date arrives, the capsule unlocks and the contents can be opened as a step-by-step **reveal ceremony** — one contribution at a time, or as a collage — or viewed all at once. After a capsule opens, anyone can like or comment on what's inside, and the owner can mark each **prediction** as having come true or not.
 
 ## Requirements
 
