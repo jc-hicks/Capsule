@@ -73,6 +73,12 @@ export const createCapsule = async (capsule, ownerId) => {
     theme: CAPSULE_THEME_IDS.includes(capsule.theme)
       ? capsule.theme
       : DEFAULT_CAPSULE_THEME,
+    // Opt-in "time capsule discipline" setting: once true, the owner can
+    // never change the open date again (enforced in the PUT route, not
+    // here, since that's where the current capsule is already loaded).
+    // There's no way to turn this on later or back off — it's a one-time
+    // choice made at creation.
+    openDateLocked: Boolean(capsule.lockOpenDate),
     members: capsule.members || [],
     owner: new ObjectId(ownerId),
     shareCode: generateShareCode(ownerId),

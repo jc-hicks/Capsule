@@ -384,6 +384,77 @@ export default function CapsuleDetailPage() {
     }
   };
 
+  const handleToggleLike = async (contribution) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/like`,
+        {
+          method: "PATCH",
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to update reaction");
+      }
+
+      await reloadCapsule();
+    } catch (likeError) {
+      setError(likeError.message);
+    }
+  };
+
+  const handleAddComment = async (contribution, text) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/comments`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ text })
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to add comment");
+      }
+
+      await reloadCapsule();
+    } catch (commentError) {
+      setError(commentError.message);
+    }
+  };
+
+  const handleDeleteComment = async (contribution, comment) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/comments/${comment.id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Unable to delete comment");
+      }
+
+      await reloadCapsule();
+    } catch (deleteCommentError) {
+      setError(deleteCommentError.message);
+    }
+  };
+
   const startEditing = () => {
     setEditName(capsule.name || "");
     setEditDescription(capsule.description || "");
@@ -544,8 +615,14 @@ export default function CapsuleDetailPage() {
                           onChange={(event) =>
                             setEditOpenDate(event.target.value)
                           }
-                          disabled={savingEdit}
+                          disabled={savingEdit || capsule.openDateLocked}
                         />
+                        {capsule.openDateLocked && (
+                          <Form.Text>
+                            This capsule&apos;s open date was locked at creation
+                            and can&apos;t be changed.
+                          </Form.Text>
+                        )}
                       </Form.Group>
                       <Form.Group className="mb-3">
                         <Form.Label>Submissions close</Form.Label>
@@ -640,6 +717,11 @@ export default function CapsuleDetailPage() {
                           {canContribute && submissionCountdownLabel && (
                             <small className="capsule-hero-deadline">
                               Submissions close in {submissionCountdownLabel}
+                            </small>
+                          )}
+                          {capsule.openDateLocked && (
+                            <small className="capsule-hero-date-locked">
+                              Open date locked
                             </small>
                           )}
                         </div>
@@ -848,6 +930,9 @@ export default function CapsuleDetailPage() {
                                   onCancelEdit={() => setEditingId(null)}
                                   onSaveEdit={saveContributionEdit}
                                   onDelete={handleDeleteContribution}
+                                  onToggleLike={handleToggleLike}
+                                  onAddComment={handleAddComment}
+                                  onDeleteComment={handleDeleteComment}
                                 />
                               ))}
                             </div>
@@ -926,6 +1011,9 @@ export default function CapsuleDetailPage() {
                                   contribution={contributions[ceremonyIndex]}
                                   canResolve={isOwner}
                                   onSetOutcome={handleSetOutcome}
+                                  onToggleLike={handleToggleLike}
+                                  onAddComment={handleAddComment}
+                                  onDeleteComment={handleDeleteComment}
                                 />
                               </div>
                               <div className="reveal-ceremony-actions">
@@ -966,6 +1054,9 @@ export default function CapsuleDetailPage() {
                               capsuleId={id}
                               isOwner={isOwner}
                               onSetOutcome={handleSetOutcome}
+                              onToggleLike={handleToggleLike}
+                              onAddComment={handleAddComment}
+                              onDeleteComment={handleDeleteComment}
                             />
                           )
                         ) : (

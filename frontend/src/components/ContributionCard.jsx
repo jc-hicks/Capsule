@@ -27,17 +27,28 @@ export default function ContributionCard({
   onCancelEdit = undefined,
   onSaveEdit = undefined,
   onDelete = undefined,
-  onSetOutcome = undefined
+  onSetOutcome = undefined,
+  onToggleLike = undefined,
+  onAddComment = undefined,
+  onDeleteComment = undefined
 }) {
   const isPrediction = contribution.type === "prediction";
   const { outcome } = contribution;
-  const mediaBase = `/api/capsules/${contribution.capsuleId}/contributions/${contribution.id}`;
-
+  const comments = contribution.comments || [];
+  const [commentDraft, setCommentDraft] = useState("");
   const [draftContent, setDraftContent] = useState(contribution.content || "");
   const [draftPhoto, setDraftPhoto] = useState(null);
   const [draftAudio, setDraftAudio] = useState(null);
   const [recorderKey, setRecorderKey] = useState(0);
   const [wasEditing, setWasEditing] = useState(isEditing);
+  const mediaBase = `/api/capsules/${contribution.capsuleId}/contributions/${contribution.id}`;
+
+  const handleCommentSubmit = (event) => {
+    event.preventDefault();
+    if (!commentDraft.trim()) return;
+    onAddComment?.(contribution, commentDraft.trim());
+    setCommentDraft("");
+  };
 
   if (isEditing !== wasEditing) {
     setWasEditing(isEditing);
@@ -118,6 +129,17 @@ export default function ContributionCard({
                 onChange={(event) => setDraftContent(event.target.value)}
                 disabled={savingEdit}
               />
+            )}
+
+            {(comments.length > 0 || contribution.likeCount > 0) && (
+              <p className="contribution-editing-note">
+                {contribution.likeCount > 0 &&
+                  `${contribution.likeCount} like${contribution.likeCount === 1 ? "" : "s"}`}
+                {contribution.likeCount > 0 && comments.length > 0 && " · "}
+                {comments.length > 0 &&
+                  `${comments.length} comment${comments.length === 1 ? "" : "s"}`}
+                {" — kept while you edit."}
+              </p>
             )}
 
             <div className="contribution-actions">
@@ -250,6 +272,65 @@ export default function ContributionCard({
             </Button>
           </div>
         )}
+
+        {!sealed && (
+          <div className="contribution-reactions">
+            <Button
+              type="button"
+              size="sm"
+              variant={
+                contribution.likedByViewer ? "primary" : "outline-secondary"
+              }
+              onClick={() => onToggleLike?.(contribution)}
+            >
+              {contribution.likedByViewer ? "Liked" : "Like"}
+              {contribution.likeCount > 0 ? ` (${contribution.likeCount})` : ""}
+            </Button>
+
+            {comments.length > 0 && (
+              <ul className="contribution-comment-list">
+                {comments.map((comment) => (
+                  <li key={comment.id} className="contribution-comment">
+                    <span className="contribution-comment-author">
+                      {comment.authorName}
+                    </span>
+                    <span className="contribution-comment-text">
+                      {comment.text}
+                    </span>
+                    {comment.deletableByViewer && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="contribution-comment-delete"
+                        onClick={() => onDeleteComment?.(contribution, comment)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Form
+              className="contribution-comment-form"
+              onSubmit={handleCommentSubmit}
+            >
+              <Form.Control
+                type="text"
+                size="sm"
+                placeholder="Add a comment"
+                value={commentDraft}
+                onChange={(event) => setCommentDraft(event.target.value)}
+                aria-label="Add a comment"
+              />
+              <Button type="submit" size="sm" disabled={!commentDraft.trim()}>
+                Post
+              </Button>
+            </Form>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
@@ -266,7 +347,17 @@ ContributionCard.propTypes = {
     content: PropTypes.string,
     photoName: PropTypes.string,
     audioName: PropTypes.string,
-    outcome: PropTypes.bool
+    outcome: PropTypes.bool,
+    likeCount: PropTypes.number,
+    likedByViewer: PropTypes.bool,
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        authorName: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        deletableByViewer: PropTypes.bool
+      })
+    )
   }).isRequired,
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,
@@ -278,5 +369,8 @@ ContributionCard.propTypes = {
   onCancelEdit: PropTypes.func,
   onSaveEdit: PropTypes.func,
   onDelete: PropTypes.func,
-  onSetOutcome: PropTypes.func
+  onSetOutcome: PropTypes.func,
+  onToggleLike: PropTypes.func,
+  onAddComment: PropTypes.func,
+  onDeleteComment: PropTypes.func
 };

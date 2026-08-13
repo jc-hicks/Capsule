@@ -28,7 +28,10 @@ export default function RevealCollage({
   contributions,
   capsuleId,
   isOwner,
-  onSetOutcome
+  onSetOutcome,
+  onToggleLike,
+  onAddComment,
+  onDeleteComment
 }) {
   // Seeded once from each contribution's server-tracked `revealed` flag (per
   // account, not per browser), then updated optimistically on click so a tap
@@ -88,6 +91,9 @@ export default function RevealCollage({
                   contribution={contribution}
                   canResolve={isOwner}
                   onSetOutcome={onSetOutcome}
+                  onToggleLike={onToggleLike}
+                  onAddComment={onAddComment}
+                  onDeleteComment={onDeleteComment}
                 />
               ) : (
                 <button
@@ -130,5 +136,8 @@ RevealCollage.propTypes = {
   ).isRequired,
   capsuleId: PropTypes.string.isRequired,
   isOwner: PropTypes.bool,
-  onSetOutcome: PropTypes.func
+  onSetOutcome: PropTypes.func,
+  onToggleLike: PropTypes.func,
+  onAddComment: PropTypes.func,
+  onDeleteComment: PropTypes.func
 };

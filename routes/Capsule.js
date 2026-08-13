@@ -11,8 +11,10 @@ import {
   updateCapsule
 } from "../models/Capsule.js";
 import {
+  addContributionComment,
   createContribution,
   deleteContribution,
+  deleteContributionComment,
   deleteContributionsByCapsuleId,
   findContributionById,
   findContributionsByAuthor,
@@ -21,6 +23,7 @@ import {
   markContributionRevealed,
   resetRevealedForViewer,
   setPredictionOutcome,
+  toggleContributionLike,
   updateContribution
 } from "../models/Contribution.js";
 
@@ -489,6 +492,144 @@ router.patch(
   }
 );
 
+router.patch(
+  "/capsules/:id/contributions/:contributionId/like",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (!getCapsuleOpenState(capsule).isOpen) {
+        return res.status(403).json({
+          error: "Reactions are only available after the capsule opens"
+        });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const updated = await toggleContributionLike(
+        req.params.contributionId,
+        req.user.id
+      );
+
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  "/capsules/:id/contributions/:contributionId/comments",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (!getCapsuleOpenState(capsule).isOpen) {
+        return res.status(403).json({
+          error: "Comments are only available after the capsule opens"
+        });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const { text } = req.body;
+      if (typeof text !== "string" || !text.trim()) {
+        return res.status(400).json({ error: "Comment text is required" });
+      }
+
+      const updated = await addContributionComment(req.params.contributionId, {
+        authorId: req.user.id,
+        authorName: req.user.name,
+        text
+      });
+
+      res.status(201).json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete(
+  "/capsules/:id/contributions/:contributionId/comments/:commentId",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const deleted = await deleteContributionComment(
+        req.params.contributionId,
+        req.params.commentId,
+        req.user.id
+      );
+
+      if (!deleted) {
+        return res.status(404).json({ error: "Comment not found" });
+      }
+
+      const updated = await findContributionById(
+        req.params.contributionId,
+        req.user.id
+      );
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.delete(
   "/capsules/:id/reveals",
   isAuthenticated,
@@ -528,7 +669,14 @@ router.get(
 );
 
 router.post("/capsules", isAuthenticated, async (req, res, next) => {
-  const { name, description, openDate, submissionDeadline, theme } = req.body;
+  const {
+    name,
+    description,
+    openDate,
+    submissionDeadline,
+    theme,
+    lockOpenDate
+  } = req.body;
 
   if (!name || !description || !openDate || !submissionDeadline) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -554,7 +702,7 @@ router.post("/capsules", isAuthenticated, async (req, res, next) => {
 
   try {
     const newCapsule = await createCapsule(
-      { name, description, openDate, submissionDeadline, theme },
+      { name, description, openDate, submissionDeadline, theme, lockOpenDate },
       req.user.id
     );
     res.status(201).json(newCapsule);
@@ -588,7 +736,17 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (description !== undefined) updates.description = description;
-    if (openDate !== undefined) updates.openDate = openDate;
+    if (openDate !== undefined) {
+      if (
+        capsule.openDateLocked &&
+        new Date(openDate).getTime() !== new Date(capsule.openDate).getTime()
+      ) {
+        return res.status(403).json({
+          error: "The open date was locked at creation and can't be changed"
+        });
+      }
+      updates.openDate = openDate;
+    }
     if (submissionDeadline !== undefined) {
       updates.submissionDeadline = submissionDeadline;
     }
