@@ -355,6 +355,77 @@ export default function CapsuleDetailPage() {
     }
   };
 
+  const handleToggleLike = async (contribution) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/like`,
+        {
+          method: "PATCH",
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to update reaction");
+      }
+
+      await reloadCapsule();
+    } catch (likeError) {
+      setError(likeError.message);
+    }
+  };
+
+  const handleAddComment = async (contribution, text) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/comments`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ text })
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to add comment");
+      }
+
+      await reloadCapsule();
+    } catch (commentError) {
+      setError(commentError.message);
+    }
+  };
+
+  const handleDeleteComment = async (contribution, comment) => {
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/capsules/${id}/contributions/${contribution.id}/comments/${comment.id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Unable to delete comment");
+      }
+
+      await reloadCapsule();
+    } catch (deleteCommentError) {
+      setError(deleteCommentError.message);
+    }
+  };
+
   const startEditing = () => {
     setEditName(capsule.name || "");
     setEditDescription(capsule.description || "");
@@ -851,6 +922,9 @@ export default function CapsuleDetailPage() {
                                   showActions={canContribute}
                                   onEdit={startEditContribution}
                                   onDelete={handleDeleteContribution}
+                                  onToggleLike={handleToggleLike}
+                                  onAddComment={handleAddComment}
+                                  onDeleteComment={handleDeleteComment}
                                 />
                               ))}
                             </div>
@@ -929,6 +1003,9 @@ export default function CapsuleDetailPage() {
                                   contribution={contributions[ceremonyIndex]}
                                   canResolve={isOwner}
                                   onSetOutcome={handleSetOutcome}
+                                  onToggleLike={handleToggleLike}
+                                  onAddComment={handleAddComment}
+                                  onDeleteComment={handleDeleteComment}
                                 />
                               </div>
                               <div className="reveal-ceremony-actions">
@@ -969,6 +1046,9 @@ export default function CapsuleDetailPage() {
                               capsuleId={id}
                               isOwner={isOwner}
                               onSetOutcome={handleSetOutcome}
+                              onToggleLike={handleToggleLike}
+                              onAddComment={handleAddComment}
+                              onDeleteComment={handleDeleteComment}
                             />
                           )
                         ) : (

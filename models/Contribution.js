@@ -11,13 +11,22 @@ const WITHOUT_MEDIA = { photoDataUrl: 0, audioDataUrl: 0 };
 
 const toPlain = (doc, viewerId) => {
   if (!doc) return null;
-  const { revealedBy, ...rest } = doc;
+  const { revealedBy, likes, comments, ...rest } = doc;
   return {
     ...rest,
     id: doc._id.toString(),
     capsuleId: doc.capsuleId.toString(),
     authorId: doc.authorId.toString(),
-    revealed: Boolean(viewerId) && (revealedBy || []).includes(viewerId)
+    revealed: Boolean(viewerId) && (revealedBy || []).includes(viewerId),
+    likeCount: (likes || []).length,
+    likedByViewer: Boolean(viewerId) && (likes || []).includes(viewerId),
+    // Reactions are only meaningful once a capsule is open, so a comment's
+    // own author is the only one who can delete it, computed server-side
+    // rather than trusting the client with the viewer's raw id.
+    comments: (comments || []).map((comment) => ({
+      ...comment,
+      deletableByViewer: Boolean(viewerId) && comment.authorId === viewerId
+    }))
   };
 };
 
@@ -51,7 +60,9 @@ export const createContribution = async ({
     authorId: new ObjectId(authorId),
     authorName: authorName?.trim() || "Anonymous",
     createdAt: new Date(),
-    revealedBy: []
+    revealedBy: [],
+    likes: [],
+    comments: []
   };
 
   // Predictions can be resolved as correct/incorrect once the capsule opens;
@@ -182,6 +193,74 @@ export const setPredictionOutcome = async (id, outcome) => {
   );
 
   return findContributionById(id);
+};
+
+// Toggles the viewer's like on/off. Likes only make sense once a capsule is
+// open — that's enforced by the route, not here.
+export const toggleContributionLike = async (id, viewerId) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  const existing = await contributionsCollection().findOne(
+    { _id: new ObjectId(id) },
+    { projection: { likes: 1 } }
+  );
+  if (!existing) return null;
+
+  const alreadyLiked = (existing.likes || []).includes(viewerId);
+  await contributionsCollection().updateOne(
+    { _id: new ObjectId(id) },
+    alreadyLiked
+      ? { $pull: { likes: viewerId } }
+      : { $addToSet: { likes: viewerId } }
+  );
+
+  return findContributionById(id, viewerId);
+};
+
+export const addContributionComment = async (
+  id,
+  { authorId, authorName, text }
+) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  const trimmedText = typeof text === "string" ? text.trim() : "";
+  if (!trimmedText) {
+    throw new Error("Comment text is required");
+  }
+
+  const comment = {
+    id: new ObjectId().toString(),
+    authorId,
+    authorName: authorName?.trim() || "Anonymous",
+    text: trimmedText,
+    createdAt: new Date()
+  };
+
+  await contributionsCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $push: { comments: comment } }
+  );
+
+  return findContributionById(id, authorId);
+};
+
+// Only removes the comment if commentId and authorId both match, so an
+// owner can't be tricked into deleting someone else's comment.
+export const deleteContributionComment = async (id, commentId, authorId) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid contribution id");
+  }
+
+  const result = await contributionsCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $pull: { comments: { id: commentId, authorId } } }
+  );
+
+  return result.modifiedCount > 0;
 };
 
 export const deleteContribution = async (id) => {

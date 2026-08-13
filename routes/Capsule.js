@@ -11,8 +11,10 @@ import {
   updateCapsule
 } from "../models/Capsule.js";
 import {
+  addContributionComment,
   createContribution,
   deleteContribution,
+  deleteContributionComment,
   deleteContributionsByCapsuleId,
   findContributionById,
   findContributionsByAuthor,
@@ -21,6 +23,7 @@ import {
   markContributionRevealed,
   resetRevealedForViewer,
   setPredictionOutcome,
+  toggleContributionLike,
   updateContribution
 } from "../models/Contribution.js";
 
@@ -470,6 +473,144 @@ router.patch(
         req.user.id
       );
 
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch(
+  "/capsules/:id/contributions/:contributionId/like",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (!getCapsuleOpenState(capsule).isOpen) {
+        return res.status(403).json({
+          error: "Reactions are only available after the capsule opens"
+        });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const updated = await toggleContributionLike(
+        req.params.contributionId,
+        req.user.id
+      );
+
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  "/capsules/:id/contributions/:contributionId/comments",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      if (!getCapsuleOpenState(capsule).isOpen) {
+        return res.status(403).json({
+          error: "Comments are only available after the capsule opens"
+        });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const { text } = req.body;
+      if (typeof text !== "string" || !text.trim()) {
+        return res.status(400).json({ error: "Comment text is required" });
+      }
+
+      const updated = await addContributionComment(req.params.contributionId, {
+        authorId: req.user.id,
+        authorName: req.user.name,
+        text
+      });
+
+      res.status(201).json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete(
+  "/capsules/:id/contributions/:contributionId/comments/:commentId",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const capsule = await findCapsuleById(req.params.id, req.user.id);
+
+      if (!capsule) {
+        return res.status(404).json({ error: "Capsule not found" });
+      }
+
+      if (!canAccessCapsule(capsule, req.user)) {
+        return res
+          .status(403)
+          .json({ error: "You do not have access to this capsule" });
+      }
+
+      const contribution = await findContributionById(
+        req.params.contributionId
+      );
+
+      if (!contribution || contribution.capsuleId !== capsule.id) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      const deleted = await deleteContributionComment(
+        req.params.contributionId,
+        req.params.commentId,
+        req.user.id
+      );
+
+      if (!deleted) {
+        return res.status(404).json({ error: "Comment not found" });
+      }
+
+      const updated = await findContributionById(
+        req.params.contributionId,
+        req.user.id
+      );
       res.json(updated);
     } catch (error) {
       next(error);

@@ -172,3 +172,51 @@
   border-color: var(--almond-silk);
   color: var(--lilac-ash);
 }
+
+.contribution-reactions {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--almond-silk);
+}
+
+.contribution-comment-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contribution-comment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.contribution-comment-author {
+  font-weight: 700;
+  color: var(--space-indigo);
+}
+
+.contribution-comment-text {
+  color: var(--dusty-grape);
+  overflow-wrap: anywhere;
+}
+
+.contribution-comment-delete {
+  padding: 0;
+  font-size: 0.78rem;
+}
+
+.contribution-comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.contribution-comment-form .form-control {
+  flex: 1;
+}

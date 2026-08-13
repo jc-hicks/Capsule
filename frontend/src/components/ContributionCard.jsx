@@ -1,7 +1,9 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 
 import "./ContributionCard.css";
 
@@ -19,11 +21,23 @@ export default function ContributionCard({
   canResolve = false,
   onEdit = undefined,
   onDelete = undefined,
-  onSetOutcome = undefined
+  onSetOutcome = undefined,
+  onToggleLike = undefined,
+  onAddComment = undefined,
+  onDeleteComment = undefined
 }) {
   const isPrediction = contribution.type === "prediction";
   const { outcome } = contribution;
+  const comments = contribution.comments || [];
+  const [commentDraft, setCommentDraft] = useState("");
   const mediaBase = `/api/capsules/${contribution.capsuleId}/contributions/${contribution.id}`;
+
+  const handleCommentSubmit = (event) => {
+    event.preventDefault();
+    if (!commentDraft.trim()) return;
+    onAddComment?.(contribution, commentDraft.trim());
+    setCommentDraft("");
+  };
   return (
     <Card className="contribution-card">
       <Card.Body>
@@ -134,6 +148,65 @@ export default function ContributionCard({
             </Button>
           </div>
         )}
+
+        {!sealed && (
+          <div className="contribution-reactions">
+            <Button
+              type="button"
+              size="sm"
+              variant={
+                contribution.likedByViewer ? "primary" : "outline-secondary"
+              }
+              onClick={() => onToggleLike?.(contribution)}
+            >
+              {contribution.likedByViewer ? "Liked" : "Like"}
+              {contribution.likeCount > 0 ? ` (${contribution.likeCount})` : ""}
+            </Button>
+
+            {comments.length > 0 && (
+              <ul className="contribution-comment-list">
+                {comments.map((comment) => (
+                  <li key={comment.id} className="contribution-comment">
+                    <span className="contribution-comment-author">
+                      {comment.authorName}
+                    </span>
+                    <span className="contribution-comment-text">
+                      {comment.text}
+                    </span>
+                    {comment.deletableByViewer && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="contribution-comment-delete"
+                        onClick={() => onDeleteComment?.(contribution, comment)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Form
+              className="contribution-comment-form"
+              onSubmit={handleCommentSubmit}
+            >
+              <Form.Control
+                type="text"
+                size="sm"
+                placeholder="Add a comment"
+                value={commentDraft}
+                onChange={(event) => setCommentDraft(event.target.value)}
+                aria-label="Add a comment"
+              />
+              <Button type="submit" size="sm" disabled={!commentDraft.trim()}>
+                Post
+              </Button>
+            </Form>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
@@ -150,12 +223,25 @@ ContributionCard.propTypes = {
     content: PropTypes.string,
     photoName: PropTypes.string,
     audioName: PropTypes.string,
-    outcome: PropTypes.bool
+    outcome: PropTypes.bool,
+    likeCount: PropTypes.number,
+    likedByViewer: PropTypes.bool,
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        authorName: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        deletableByViewer: PropTypes.bool
+      })
+    )
   }).isRequired,
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,
   canResolve: PropTypes.bool,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
-  onSetOutcome: PropTypes.func
+  onSetOutcome: PropTypes.func,
+  onToggleLike: PropTypes.func,
+  onAddComment: PropTypes.func,
+  onDeleteComment: PropTypes.func
 };
