@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 
+import VoiceRecorder from "./VoiceRecorder.jsx";
 import "./ContributionCard.css";
 
 const contributionTypeLabels = {
@@ -18,8 +19,13 @@ export default function ContributionCard({
   contribution,
   sealed = false,
   showActions = false,
+  showOutcome = true,
   canResolve = false,
+  isEditing = false,
+  savingEdit = false,
   onEdit = undefined,
+  onCancelEdit = undefined,
+  onSaveEdit = undefined,
   onDelete = undefined,
   onSetOutcome = undefined,
   onToggleLike = undefined,
@@ -30,6 +36,11 @@ export default function ContributionCard({
   const { outcome } = contribution;
   const comments = contribution.comments || [];
   const [commentDraft, setCommentDraft] = useState("");
+  const [draftContent, setDraftContent] = useState(contribution.content || "");
+  const [draftPhoto, setDraftPhoto] = useState(null);
+  const [draftAudio, setDraftAudio] = useState(null);
+  const [recorderKey, setRecorderKey] = useState(0);
+  const [wasEditing, setWasEditing] = useState(isEditing);
   const mediaBase = `/api/capsules/${contribution.capsuleId}/contributions/${contribution.id}`;
 
   const handleCommentSubmit = (event) => {
@@ -38,6 +49,119 @@ export default function ContributionCard({
     onAddComment?.(contribution, commentDraft.trim());
     setCommentDraft("");
   };
+
+  if (isEditing !== wasEditing) {
+    setWasEditing(isEditing);
+    if (isEditing) {
+      setDraftContent(contribution.content || "");
+      setDraftPhoto(null);
+      setDraftAudio(null);
+      setRecorderKey((key) => key + 1);
+    }
+  }
+
+  const submitEdit = (event) => {
+    event.preventDefault();
+    onSaveEdit?.(contribution, {
+      content: draftContent,
+      photoFile: draftPhoto,
+      audioBlob: draftAudio
+    });
+  };
+
+  if (isEditing) {
+    return (
+      <Card className="contribution-card contribution-card-editing">
+        <Card.Body>
+          <Form onSubmit={submitEdit}>
+            <div className="contribution-card-header">
+              <span className="contribution-type-badge">
+                {contributionTypeLabels[contribution.type]}
+              </span>
+              <span className="contribution-editing-label">Editing</span>
+            </div>
+
+            {contribution.type === "photo" ? (
+              <>
+                <Form.Group className="mb-2">
+                  <Form.Label>Replace photo</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    size="sm"
+                    onChange={(event) =>
+                      setDraftPhoto(event.target.files?.[0] || null)
+                    }
+                    disabled={savingEdit}
+                  />
+                  <Form.Text>Leave empty to keep the current photo.</Form.Text>
+                </Form.Group>
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  value={draftContent}
+                  onChange={(event) => setDraftContent(event.target.value)}
+                  placeholder="Add a caption"
+                  disabled={savingEdit}
+                />
+              </>
+            ) : contribution.type === "voice" ? (
+              <>
+                <VoiceRecorder
+                  key={recorderKey}
+                  onRecorded={setDraftAudio}
+                  existingLabel="Record again to replace your saved note."
+                />
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  value={draftContent}
+                  onChange={(event) => setDraftContent(event.target.value)}
+                  placeholder="Add a caption"
+                  disabled={savingEdit}
+                />
+              </>
+            ) : (
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={draftContent}
+                onChange={(event) => setDraftContent(event.target.value)}
+                disabled={savingEdit}
+              />
+            )}
+
+            {(comments.length > 0 || contribution.likeCount > 0) && (
+              <p className="contribution-editing-note">
+                {contribution.likeCount > 0 &&
+                  `${contribution.likeCount} like${contribution.likeCount === 1 ? "" : "s"}`}
+                {contribution.likeCount > 0 && comments.length > 0 && " · "}
+                {comments.length > 0 &&
+                  `${comments.length} comment${comments.length === 1 ? "" : "s"}`}
+                {" — kept while you edit."}
+              </p>
+            )}
+
+            <div className="contribution-actions">
+              <Button type="submit" size="sm" disabled={savingEdit}>
+                {savingEdit ? "Saving…" : "Save"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline-secondary"
+                size="sm"
+                onClick={() => onCancelEdit?.()}
+                disabled={savingEdit}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
+    );
+  }
+
   return (
     <Card className="contribution-card">
       <Card.Body>
@@ -89,7 +213,7 @@ export default function ContributionCard({
           <p className="contribution-text">{contribution.content}</p>
         )}
 
-        {!sealed && isPrediction && (
+        {!sealed && showOutcome && isPrediction && (
           <div className="prediction-outcome">
             {outcome === true ? (
               <span className="outcome-pill outcome-true">Came true</span>
@@ -242,8 +366,13 @@ ContributionCard.propTypes = {
   }).isRequired,
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,
+  showOutcome: PropTypes.bool,
   canResolve: PropTypes.bool,
+  isEditing: PropTypes.bool,
+  savingEdit: PropTypes.bool,
   onEdit: PropTypes.func,
+  onCancelEdit: PropTypes.func,
+  onSaveEdit: PropTypes.func,
   onDelete: PropTypes.func,
   onSetOutcome: PropTypes.func,
   onToggleLike: PropTypes.func,

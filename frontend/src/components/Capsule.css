@@ -1,6 +1,7 @@
 @import "../styles/palette.css";
 
 .capsule-card {
+  position: relative;
   height: 100%;
   background: var(--parchment);
   border: 1px solid var(--parchment);
@@ -12,6 +13,32 @@
     box-shadow 0.15s ease;
 }
 
+.capsule-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.capsule-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.capsule-card:hover .capsule-card-link,
+.capsule-card-link:focus-visible {
+  text-decoration: underline;
+}
+
+.capsule-card:focus-within {
+  outline: 2px solid var(--space-indigo);
+  outline-offset: 2px;
+}
+
+.capsule-card-link:focus-visible {
+  outline: none;
+}
+
 .capsule-card-header {
   display: flex;
   justify-content: space-between;
@@ -21,14 +48,15 @@
 }
 
 .capsule-card-header .card-title {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
 }
 
 .capsule-role-badge {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
+  margin-bottom: 0.2rem;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.72rem;
@@ -51,6 +79,7 @@
 .capsule-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 24px rgba(34, 34, 59, 0.16);
+  cursor: pointer;
 }
 
 .capsule-card .card-title {
@@ -60,6 +89,7 @@
 
 .capsule-card .capsule-description {
   color: var(--dusty-grape);
+  margin-bottom: 0.25rem;
 }
 
 .capsule-members {
@@ -113,6 +143,8 @@
 }
 
 .capsule-share-code-copy {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;

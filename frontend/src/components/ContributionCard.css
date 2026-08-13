@@ -25,6 +25,29 @@
   pointer-events: none;
 }
 
+.contribution-card-editing {
+  border-color: var(--dusty-grape);
+  box-shadow: 0 2px 10px rgba(34, 34, 59, 0.14);
+}
+
+.contribution-card-editing .form-control {
+  margin-bottom: 0.5rem;
+}
+
+.contribution-editing-note {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  color: var(--dusty-grape);
+}
+
+.contribution-editing-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dusty-grape);
+}
+
 .contribution-card-header {
   display: flex;
   justify-content: space-between;

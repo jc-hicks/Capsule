@@ -9,6 +9,7 @@ import {
   CAPSULE_THEMES,
   DEFAULT_CAPSULE_THEME
 } from "../styles/capsuleThemes.js";
+import { todayInputValue } from "../utils/dates.js";
 import "./CapsuleForm.css";
 
 export default function CapsuleForm({ onSubmit }) {
@@ -18,6 +19,7 @@ export default function CapsuleForm({ onSubmit }) {
   const [submissionDeadline, setSubmissionDeadline] = useState("");
   const [theme, setTheme] = useState(DEFAULT_CAPSULE_THEME);
   const [lockOpenDate, setLockOpenDate] = useState(false);
+  const today = todayInputValue();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,6 +69,7 @@ export default function CapsuleForm({ onSubmit }) {
         <Form.Control
           type="date"
           value={openDate}
+          min={today}
           onChange={(e) => setOpenDate(e.target.value)}
           required
         />
@@ -76,6 +79,7 @@ export default function CapsuleForm({ onSubmit }) {
         <Form.Control
           type="date"
           value={submissionDeadline}
+          min={today}
           max={openDate || undefined}
           onChange={(e) => setSubmissionDeadline(e.target.value)}
           required
