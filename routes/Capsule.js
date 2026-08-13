@@ -516,7 +516,14 @@ router.get(
 );
 
 router.post("/capsules", isAuthenticated, async (req, res, next) => {
-  const { name, description, openDate, submissionDeadline, theme } = req.body;
+  const {
+    name,
+    description,
+    openDate,
+    submissionDeadline,
+    theme,
+    lockOpenDate
+  } = req.body;
 
   if (!name || !description || !openDate || !submissionDeadline) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -530,7 +537,7 @@ router.post("/capsules", isAuthenticated, async (req, res, next) => {
 
   try {
     const newCapsule = await createCapsule(
-      { name, description, openDate, submissionDeadline, theme },
+      { name, description, openDate, submissionDeadline, theme, lockOpenDate },
       req.user.id
     );
     res.status(201).json(newCapsule);
@@ -564,7 +571,17 @@ router.put("/capsules/:id", isAuthenticated, async (req, res, next) => {
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (description !== undefined) updates.description = description;
-    if (openDate !== undefined) updates.openDate = openDate;
+    if (openDate !== undefined) {
+      if (
+        capsule.openDateLocked &&
+        new Date(openDate).getTime() !== new Date(capsule.openDate).getTime()
+      ) {
+        return res.status(403).json({
+          error: "The open date was locked at creation and can't be changed"
+        });
+      }
+      updates.openDate = openDate;
+    }
     if (submissionDeadline !== undefined) {
       updates.submissionDeadline = submissionDeadline;
     }

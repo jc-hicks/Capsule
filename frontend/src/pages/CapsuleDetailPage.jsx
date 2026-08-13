@@ -514,8 +514,14 @@ export default function CapsuleDetailPage() {
                           onChange={(event) =>
                             setEditOpenDate(event.target.value)
                           }
-                          disabled={savingEdit}
+                          disabled={savingEdit || capsule.openDateLocked}
                         />
+                        {capsule.openDateLocked && (
+                          <Form.Text>
+                            This capsule&apos;s open date was locked at creation
+                            and can&apos;t be changed.
+                          </Form.Text>
+                        )}
                       </Form.Group>
                       <Form.Group className="mb-3">
                         <Form.Label>Submissions close</Form.Label>
@@ -609,6 +615,11 @@ export default function CapsuleDetailPage() {
                           {canContribute && submissionCountdownLabel && (
                             <small className="capsule-hero-deadline">
                               Submissions close in {submissionCountdownLabel}
+                            </small>
+                          )}
+                          {capsule.openDateLocked && (
+                            <small className="capsule-hero-date-locked">
+                              Open date locked
                             </small>
                           )}
                         </div>

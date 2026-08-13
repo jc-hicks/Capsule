@@ -120,6 +120,16 @@
   color: var(--dusty-grape);
 }
 
+.capsule-hero-date .capsule-hero-date-locked {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(74, 78, 105, 0.25);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+}
+
 .capsule-hero-note {
   margin-top: 1rem;
   padding: 0.9rem 1rem;

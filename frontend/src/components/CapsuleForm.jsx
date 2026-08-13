@@ -17,6 +17,7 @@ export default function CapsuleForm({ onSubmit }) {
   const [openDate, setOpenDate] = useState("");
   const [submissionDeadline, setSubmissionDeadline] = useState("");
   const [theme, setTheme] = useState(DEFAULT_CAPSULE_THEME);
+  const [lockOpenDate, setLockOpenDate] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,8 @@ export default function CapsuleForm({ onSubmit }) {
       description,
       openDate,
       submissionDeadline,
-      theme
+      theme,
+      lockOpenDate
     });
     // Keep the entered values on screen if the create failed so the user can
     // fix and resubmit instead of losing their input.
@@ -35,6 +37,7 @@ export default function CapsuleForm({ onSubmit }) {
       setOpenDate("");
       setSubmissionDeadline("");
       setTheme(DEFAULT_CAPSULE_THEME);
+      setLockOpenDate(false);
     }
   };
 
@@ -80,6 +83,19 @@ export default function CapsuleForm({ onSubmit }) {
         <Form.Text>
           After this date the capsule is sealed — no new entries or edits — and
           the contents stay hidden until the open date.
+        </Form.Text>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="lockOpenDate">
+        <Form.Check
+          type="checkbox"
+          label="Lock the open date once set"
+          checked={lockOpenDate}
+          onChange={(e) => setLockOpenDate(e.target.checked)}
+        />
+        <Form.Text>
+          Keeps anyone, including you, from ever changing the open date after
+          this capsule is created. Off by default — turn it on for real
+          &quot;time capsule discipline.&quot;
         </Form.Text>
       </Form.Group>
       <Form.Group className="mb-3">
