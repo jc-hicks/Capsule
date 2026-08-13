@@ -830,7 +830,10 @@ export default function CapsuleDetailPage() {
 
                             {type === "photo" ? (
                               <>
-                                <Form.Group className="mb-3">
+                                <Form.Group
+                                  className="mb-3"
+                                  controlId="contributionPhoto"
+                                >
                                   <Form.Label>Upload a photo</Form.Label>
                                   <Form.Control
                                     type="file"

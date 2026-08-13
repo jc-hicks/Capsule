@@ -53,7 +53,7 @@ export default function Register() {
   };
 
   return (
-    <main className="auth-wrapper">
+    <div className="auth-wrapper">
       <div className="auth-panel">
         <div className="auth-header">
           <span className="auth-logo" aria-hidden="true">
@@ -142,6 +142,6 @@ export default function Register() {
           </Card.Body>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }

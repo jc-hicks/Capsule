@@ -15,7 +15,7 @@ Deployed on Render: <https://capsule-s77x.onrender.com>
 ## Authors
 
 - Alexandra (Ally) Descoteaux — contributions and reveal (contributions collection, full CRUD, reveal view), capsule color themes, likes and comments on contributions, locking the open date, consistent buttons and typography across the app, and the contrast/performance fixes found by running Lighthouse.
-- James Hicks — authentication, capsules, and invites (users and capsules collections), page layout and the countdown component, styling for the login/register/index pages, preventing backdated open dates, inline contribution editing, and making capsule cards clickable.
+- James Hicks — Login page/ picture collage, authentication, password confirmation, capsules, and invites (users and capsules collections), page layout, and the countdown component, styling for the login/register/index pages, preventing backdated open dates, inline contribution editing, and making capsule cards clickable.
 
 ## Class Link
 

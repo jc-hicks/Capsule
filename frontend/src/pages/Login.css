@@ -112,3 +112,9 @@
   text-align: center;
   color: var(--dusty-grape);
 }
+
+/* Bootstrap's default link blue only clears ~3.8:1 on the parchment card. */
+.auth-footer a {
+  color: var(--space-indigo);
+  font-weight: 600;
+}
