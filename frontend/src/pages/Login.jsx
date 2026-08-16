@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <main className="auth-wrapper">
+    <div className="auth-wrapper">
       <PolaroidWall />
       <div className="auth-panel">
         <div className="auth-header">
@@ -99,6 +99,6 @@ export default function Login() {
           </Card.Body>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }

@@ -99,8 +99,8 @@
   min-width: 170px;
 }
 
-.capsule-hero-date span,
-.capsule-hero-date small {
+.capsule-hero-date > span,
+.capsule-hero-date > small {
   color: var(--dusty-grape);
 }
 
