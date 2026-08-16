@@ -919,6 +919,7 @@ export default function CapsuleDetailPage() {
                                   sealed={submissionsClosed && locked}
                                   showActions={canContribute}
                                   showOutcome={!locked}
+                                  canReact={!locked}
                                   isEditing={editingId === contribution.id}
                                   savingEdit={submitting}
                                   onEdit={startEditContribution}
@@ -1005,6 +1006,7 @@ export default function CapsuleDetailPage() {
                                 <ContributionCard
                                   contribution={contributions[ceremonyIndex]}
                                   canResolve={isOwner}
+                                  canReact={!locked}
                                   onSetOutcome={handleSetOutcome}
                                   onToggleLike={handleToggleLike}
                                   onAddComment={handleAddComment}
@@ -1048,6 +1050,7 @@ export default function CapsuleDetailPage() {
                               contributions={contributions}
                               capsuleId={id}
                               isOwner={isOwner}
+                              canReact={!locked}
                               onSetOutcome={handleSetOutcome}
                               onToggleLike={handleToggleLike}
                               onAddComment={handleAddComment}

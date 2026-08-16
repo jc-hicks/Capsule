@@ -28,6 +28,7 @@ export default function RevealCollage({
   contributions,
   capsuleId,
   isOwner,
+  canReact,
   onSetOutcome,
   onToggleLike,
   onAddComment,
@@ -90,6 +91,7 @@ export default function RevealCollage({
                 <ContributionCard
                   contribution={contribution}
                   canResolve={isOwner}
+                  canReact={canReact}
                   onSetOutcome={onSetOutcome}
                   onToggleLike={onToggleLike}
                   onAddComment={onAddComment}
@@ -136,6 +138,7 @@ RevealCollage.propTypes = {
   ).isRequired,
   capsuleId: PropTypes.string.isRequired,
   isOwner: PropTypes.bool,
+  canReact: PropTypes.bool,
   onSetOutcome: PropTypes.func,
   onToggleLike: PropTypes.func,
   onAddComment: PropTypes.func,

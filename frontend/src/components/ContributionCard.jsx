@@ -20,6 +20,7 @@ export default function ContributionCard({
   sealed = false,
   showActions = false,
   showOutcome = true,
+  canReact = false,
   canResolve = false,
   isEditing = false,
   savingEdit = false,
@@ -278,7 +279,7 @@ export default function ContributionCard({
           </div>
         )}
 
-        {!sealed && (
+        {canReact && (
           <div className="contribution-reactions">
             <Button
               type="button"
@@ -367,6 +368,7 @@ ContributionCard.propTypes = {
   sealed: PropTypes.bool,
   showActions: PropTypes.bool,
   showOutcome: PropTypes.bool,
+  canReact: PropTypes.bool,
   canResolve: PropTypes.bool,
   isEditing: PropTypes.bool,
   savingEdit: PropTypes.bool,
