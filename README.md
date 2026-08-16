@@ -4,13 +4,13 @@ A full stack website for saving memories in a time capsule.
 
 ## Live Demo
 
-Deployed on Render: <https://capsule-s77x.onrender.com>
+Deployed on Render: <https://capsulev2.onrender.com>
 
 ## Slides
 
-<https://docs.google.com/presentation/d/1ecZQcJ44aZm_QCXuPGLc4gVp8-woWTznhn5odgEosRg/edit?usp=sharing>
+<https://docs.google.com/presentation/d/1D6sq4xr4jkbxK9met3PNPbeGc8QxE2ozW37JDUmcM4Q/edit?usp=sharing>
 
-[Demo Video](https://www.youtube.com/watch?v=w9BYKyD3LWM)
+[Demo Video](https://youtu.be/1V_gC8SJSyY)
 
 ## Authors
 
