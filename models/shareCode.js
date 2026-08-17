@@ -29,6 +29,8 @@ export const generateShareCode = (seed = "") => {
   return encode(first, 4) + encode(second, 4);
 };
 
+// Great use of a regular expression pattern below!
+
 // Normalize user-typed codes: uppercase, strip whitespace/dashes.
 export const normalizeShareCode = (code) =>
   typeof code === "string" ? code.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
