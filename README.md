@@ -1,3 +1,4 @@
+As I previously stated in my comments from the old README.md file, I would recommend making those changes to your file such as adding: Project structure, technologies used, re-order of content in this file (e.g., Project Objective -> Authors -> Capsule, etc.). Otherwise, I noticed significant improvements (e.g., the screenshot of your site's homepage) in this file versus the previous one in your other branch. Great job!
 # Capsule
 
 A full stack website for saving memories in a time capsule.
