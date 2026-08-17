@@ -3,8 +3,11 @@ import path from "node:path";
 import compression from "compression";
 import express from "express";
 import passport from "./config/passport.js";
+import process from "process"; // You'll need this for the 'PORT' variable assignment to access 'process.env'.
 import session from "express-session";
 import auth from "./routes/Auth.js";
+
+// Excellent backend.js file and code documentation throughout
 
 import { connectDB } from "./config/db.js";
 import capsuleRoutes from "./routes/Capsule.js";
