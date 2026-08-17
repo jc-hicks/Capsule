@@ -1,3 +1,5 @@
+// One confusion, I wonder why you chose to abstract out the 'MongoClient' logic from your frontend/models/Users.js file and other db files.
+// I would consider adding this file into the /models directory rather than the /config directory.
 import { MongoClient } from "mongodb";
 
 let client;
