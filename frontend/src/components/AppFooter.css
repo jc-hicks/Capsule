@@ -1,3 +1,4 @@
+// Create a '/styles' directory & place all of your .css files into it. You can also create subdirectories for components vs pages as well for its styling.
 @import "../styles/palette.css";
 
 .app-footer {
