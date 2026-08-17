@@ -1,3 +1,6 @@
+Feedback: Great job on your README.md file! Here's my feedback regarding its content:
+
+(1) Perhaps, I would start with the Project Objective here, then transition into Capsule, Authors, Screenshots, etc. Otherwise, great job on each section in terms of content and quality!
 # Capsule
 
 A full stack website for saving memories in a time capsule.
@@ -51,10 +54,14 @@ Capsule is a digital time capsule. A user creates a capsule with a title and an 
 
 Capsule lets authenticated users create locked time capsules with an open date, and pick a color for each one so they're easy to tell apart at a glance. An owner can also lock the open date so it can never be pushed back later. Contributors can add messages, predictions, photos, and voice notes while the capsule is sealed. Once the open date arrives, the capsule unlocks and the contents can be opened as a step-by-step **reveal ceremony** — one contribution at a time, or as a collage — or viewed all at once. After a capsule opens, anyone can like or comment on what's inside, and the owner can mark each **prediction** as having come true or not.
 
+(2) + insert a 'Technologies Used' section here regarding the 3 tier client/server model/architecture used in your project.
+
 ## Requirements
 
 - Node.js 18+ recommended
 - MongoDB connection string
+
+(3) + insert your 'Project Structure' tree here for your project.
 
 ## Environment Variables
 
